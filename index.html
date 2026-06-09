@@ -3,282 +3,314 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#3C3489">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Produção">
-<title>Controle de Produção</title>
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQ29udHJvbGUgZGUgUHJvZHXDp8OjbyIsInNob3J0X25hbWUiOiJQcm9kdcOnw6NvIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmN2Y3ZjUiLCJ0aGVtZV9jb2xvciI6IiMzQzM0ODkiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJyUzRSUzQ3JlY3Qgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnIHJ4PScyMCcgZmlsbD0nJTIzM0MzNDg5JyUzRSUzQy9yZWN0JTNFJTNDdGV4dCB4PSc1MCcgeT0nNzAnIGZvbnQtc2l6ZT0nNjAnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9J3doaXRlJyUzRVAlM0MvdGV4dCUzRSUzQy9zdmclM0UiLCJzaXplcyI6IjE5MngxOTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
+<meta name="apple-mobile-web-app-title" id="meta-app-title">
+<title id="page-title">Produção</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --purple:#3C3489;--purple-light:#EEEDFE;--purple-mid:#7F77DD;
-    --teal:#0F6E56;--teal-light:#E1F5EE;--teal-mid:#1D9E75;
-    --amber:#854F0B;--amber-light:#FAEEDA;--amber-mid:#BA7517;
-    --red:#A32D2D;--red-light:#FCEBEB;--red-mid:#E24B4A;
-    --gray:#5F5E5A;--gray-light:#F1EFE8;--gray-border:#D3D1C7;
-    --bg:#f7f7f5;--card:#ffffff;--text:#1a1a18;--text-muted:#5F5E5A;
-    --radius:10px;--radius-lg:14px;
-  }
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
-  
-  #app{display:flex;flex-direction:column;min-height:100vh}
-  
-  /* Header */
-  .topbar{background:var(--purple);color:white;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-  .topbar h1{font-size:17px;font-weight:500;letter-spacing:-.2px}
-  .topbar-sub{font-size:12px;opacity:.7;margin-top:1px}
-  .btn-config{background:rgba(255,255,255,.15);border:none;color:white;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
-  
-  /* Nav */
-  nav{background:var(--card);border-bottom:1px solid var(--gray-border);display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:65px;z-index:99}
-  nav::-webkit-scrollbar{display:none}
-  .nav-btn{background:none;border:none;padding:12px 16px;font-size:13px;color:var(--text-muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:.2s}
-  .nav-btn.active{color:var(--purple);border-bottom-color:var(--purple);font-weight:500}
-  
-  /* Main */
-  main{flex:1;padding:16px;max-width:800px;margin:0 auto;width:100%}
-  
-  /* Cards */
-  .card{background:var(--card);border-radius:var(--radius-lg);border:0.5px solid var(--gray-border);padding:16px;margin-bottom:12px}
-  .card-title{font-size:13px;color:var(--text-muted);margin-bottom:12px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
-  
-  /* Stat grid */
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
-  .stat{background:var(--gray-light);border-radius:var(--radius);padding:12px 14px}
-  .stat-label{font-size:12px;color:var(--text-muted);margin-bottom:4px}
-  .stat-value{font-size:22px;font-weight:500}
-  .stat-value.red{color:var(--red)}
-  .stat-value.teal{color:var(--teal)}
-  .stat-value.purple{color:var(--purple)}
-  .stat-value.amber{color:var(--amber)}
-  
-  /* Forms */
-  .form-group{margin-bottom:12px}
-  label{display:block;font-size:13px;color:var(--text-muted);margin-bottom:5px;font-weight:500}
-  input,select,textarea{width:100%;padding:9px 12px;border:1px solid var(--gray-border);border-radius:8px;font-size:14px;background:var(--bg);color:var(--text);outline:none;transition:.2s;font-family:inherit}
-  input:focus,select:focus,textarea:focus{border-color:var(--purple-mid);box-shadow:0 0 0 3px rgba(127,119,221,.12)}
-  textarea{resize:vertical;min-height:70px}
-  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  
-  /* Buttons */
-  .btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:.15s;font-family:inherit}
-  .btn:active{transform:scale(.98)}
-  .btn-primary{background:var(--purple);color:white}
-  .btn-primary:hover{background:#534AB7}
-  .btn-secondary{background:var(--gray-light);color:var(--text)}
-  .btn-secondary:hover{background:var(--gray-border)}
-  .btn-teal{background:var(--teal);color:white}
-  .btn-teal:hover{background:#0F6E56}
-  .btn-danger{background:var(--red-light);color:var(--red)}
-  .btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
-  .btn-full{width:100%}
-  
-  /* Table */
-  .table-wrap{overflow-x:auto;border-radius:var(--radius);border:0.5px solid var(--gray-border)}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{background:var(--gray-light);padding:9px 12px;text-align:left;font-weight:500;color:var(--text-muted);font-size:12px;text-transform:uppercase;letter-spacing:.4px}
-  td{padding:9px 12px;border-top:0.5px solid var(--gray-border)}
-  tr:hover td{background:var(--gray-light)}
-  
-  /* Badge */
-  .badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500}
-  .badge-teal{background:var(--teal-light);color:var(--teal)}
-  .badge-red{background:var(--red-light);color:var(--red)}
-  .badge-amber{background:var(--amber-light);color:var(--amber)}
-  .badge-purple{background:var(--purple-light);color:var(--purple)}
-  
-  /* Alert */
-  .alert{padding:12px 14px;border-radius:var(--radius);margin-bottom:12px;font-size:13px;display:flex;align-items:flex-start;gap:8px}
-  .alert-info{background:var(--purple-light);color:var(--purple)}
-  .alert-success{background:var(--teal-light);color:var(--teal)}
-  .alert-warn{background:var(--amber-light);color:var(--amber)}
-  .alert-danger{background:var(--red-light);color:var(--red)}
-  
-  /* Modal */
-  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
-  .modal-bg.open{display:flex}
-  .modal{background:var(--card);border-radius:var(--radius-lg);padding:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
-  .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .modal-title{font-size:16px;font-weight:500}
-  .btn-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center}
-  .btn-close:hover{background:var(--gray-light)}
-  
-  /* Empty state */
-  .empty{text-align:center;padding:40px 20px;color:var(--text-muted)}
-  .empty-icon{font-size:36px;margin-bottom:10px}
-  .empty p{font-size:14px;margin-bottom:14px}
-  
-  /* Config screen */
-  #screen-config{padding:0}
-  .config-section{margin-bottom:24px}
-  .config-section h3{font-size:14px;font-weight:500;margin-bottom:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
-  
-  /* Saldo row */
-  .oficina-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:0.5px solid var(--gray-border)}
-  .oficina-row:last-child{border-bottom:none}
-  .oficina-nome{font-weight:500;font-size:14px}
-  .oficina-meta{font-size:12px;color:var(--text-muted);margin-top:2px}
-  .saldo-val{font-size:16px;font-weight:500}
-  
-  /* Upload area */
-  .upload-area{border:2px dashed var(--gray-border);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;transition:.2s}
-  .upload-area:hover{border-color:var(--purple-mid);background:var(--purple-light)}
-  .upload-area input{display:none}
-  
-  /* Loading */
-  .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  
-  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a18;color:white;padding:10px 18px;border-radius:8px;font-size:13px;z-index:300;opacity:0;transition:.3s;pointer-events:none}
-  .toast.show{opacity:1}
-  
-  @media(max-width:480px){
-    .form-row{grid-template-columns:1fr}
-    main{padding:12px}
-    .topbar{padding:12px 16px}
-  }
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#3C3489;--brand-light:#EEEDFE;--brand-mid:#7F77DD;--brand-dark:#26215C;
+  --teal:#0F6E56;--teal-light:#E1F5EE;--teal-mid:#1D9E75;
+  --amber:#854F0B;--amber-light:#FAEEDA;--amber-mid:#BA7517;
+  --red:#A32D2D;--red-light:#FCEBEB;--red-mid:#E24B4A;
+  --coral:#993C1D;--coral-light:#FAECE7;
+  --gray:#5F5E5A;--gray-light:#F1EFE8;--gray-border:#D3D1C7;
+  --bg:#f7f7f5;--card:#ffffff;--text:#1a1a18;--text-muted:#5F5E5A;
+  --radius:10px;--radius-lg:14px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+#app{display:flex;flex-direction:column;min-height:100vh}
+
+.topbar{background:var(--brand);color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:10px}
+.topbar-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.topbar-logo{width:36px;height:36px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.15);flex-shrink:0;display:none}
+.topbar-logo.visible{display:block}
+.topbar-title{font-size:16px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-sub{font-size:11px;opacity:.65;margin-top:1px}
+.topbar-actions{display:flex;gap:6px;flex-shrink:0}
+.btn-icon{background:rgba(255,255,255,.15);border:none;color:white;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+nav{background:var(--card);border-bottom:1px solid var(--gray-border);display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:61px;z-index:99}
+nav::-webkit-scrollbar{display:none}
+.nav-btn{background:none;border:none;padding:11px 14px;font-size:13px;color:var(--text-muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:.2s}
+.nav-btn.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:500}
+
+main{flex:1;padding:16px;max-width:820px;margin:0 auto;width:100%}
+
+.card{background:var(--card);border-radius:var(--radius-lg);border:0.5px solid var(--gray-border);padding:16px;margin-bottom:12px}
+.card-title{font-size:12px;color:var(--text-muted);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--gray-light);border-radius:var(--radius);padding:12px 14px}
+.stat-label{font-size:11px;color:var(--text-muted);margin-bottom:3px;font-weight:500}
+.stat-value{font-size:21px;font-weight:500}
+.stat-value.red{color:var(--red)}.stat-value.teal{color:var(--teal)}.stat-value.brand{color:var(--brand)}.stat-value.amber{color:var(--amber)}.stat-value.coral{color:var(--coral)}
+
+.form-group{margin-bottom:11px}
+label{display:block;font-size:13px;color:var(--text-muted);margin-bottom:4px;font-weight:500}
+input,select,textarea{width:100%;padding:8px 11px;border:1px solid var(--gray-border);border-radius:8px;font-size:14px;background:var(--bg);color:var(--text);outline:none;transition:.2s;font-family:inherit}
+input:focus,select:focus,textarea:focus{border-color:var(--brand-mid);box-shadow:0 0 0 3px rgba(127,119,221,.12)}
+textarea{resize:vertical;min-height:60px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:.15s;font-family:inherit}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--brand);color:white}
+.btn-primary:hover{background:var(--brand-dark)}
+.btn-secondary{background:var(--gray-light);color:var(--text)}
+.btn-secondary:hover{background:var(--gray-border)}
+.btn-teal{background:var(--teal);color:white}
+.btn-danger{background:var(--red-light);color:var(--red)}
+.btn-amber{background:var(--amber-light);color:var(--amber)}
+.btn-sm{padding:4px 9px;font-size:12px;border-radius:6px}
+.btn-full{width:100%}
+
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:0.5px solid var(--gray-border)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--gray-light);padding:8px 11px;text-align:left;font-weight:600;color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+td{padding:8px 11px;border-top:0.5px solid var(--gray-border);vertical-align:middle}
+tr:hover td{background:#fafaf8}
+
+.badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-teal{background:var(--teal-light);color:var(--teal)}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+.badge-brand{background:var(--brand-light);color:var(--brand)}
+.badge-coral{background:var(--coral-light);color:var(--coral)}
+.badge-gray{background:var(--gray-light);color:var(--gray)}
+
+.alert{padding:11px 13px;border-radius:var(--radius);margin-bottom:11px;font-size:13px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.alert-info{background:var(--brand-light);color:var(--brand)}
+.alert-success{background:var(--teal-light);color:var(--teal)}
+.alert-warn{background:var(--amber-light);color:var(--amber)}
+.alert-danger{background:var(--red-light);color:var(--red)}
+
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
+.modal-bg.open{display:flex}
+.modal{background:var(--card);border-radius:var(--radius-lg);padding:20px;width:100%;max-width:520px;margin:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.modal-title{font-size:16px;font-weight:500}
+.btn-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.btn-close:hover{background:var(--gray-light)}
+
+.empty{text-align:center;padding:36px 20px;color:var(--text-muted)}
+.empty-icon{font-size:32px;margin-bottom:8px}
+.empty p{font-size:13px;margin-bottom:12px}
+
+.row-item{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:0.5px solid var(--gray-border)}
+.row-item:last-child{border-bottom:none}
+.row-nome{font-weight:500;font-size:14px}
+.row-meta{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* Grade de corte */
+.grade-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.grade-table th,.grade-table td{border:0.5px solid var(--gray-border);padding:6px 10px;text-align:center}
+.grade-table th{background:var(--gray-light);font-weight:600;font-size:11px}
+.grade-table input{width:60px;padding:4px;text-align:center;border:none;background:transparent;font-size:13px}
+.grade-table input:focus{background:var(--brand-light);border-radius:4px;outline:none}
+
+/* Lote chip */
+.lote-chip{display:inline-flex;align-items:center;gap:6px;background:var(--brand-light);color:var(--brand);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:500;margin:2px}
+
+/* Color swatch */
+.swatch{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.15);vertical-align:middle;margin-right:4px}
+
+.upload-area{border:2px dashed var(--gray-border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:.2s;display:block}
+.upload-area:hover{border-color:var(--brand-mid);background:var(--brand-light)}
+.upload-area input{display:none}
+
+/* Color picker row */
+.color-pick-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+.color-chip{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:.15s}
+.color-chip.selected{border-color:var(--text);transform:scale(1.1)}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a18;color:white;padding:9px 16px;border-radius:8px;font-size:13px;z-index:400;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* Tab pills */
+.tab-pills{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tab-pill{padding:5px 12px;border-radius:20px;border:1px solid var(--gray-border);font-size:12px;cursor:pointer;background:none;color:var(--text-muted);transition:.15s;font-family:inherit}
+.tab-pill.active{background:var(--brand);color:white;border-color:var(--brand)}
+
+/* Preço por oficina table */
+.preco-grid{overflow-x:auto}
+.preco-grid table{min-width:500px}
+.preco-grid input{width:80px;padding:4px 6px;font-size:12px}
+
+@media(max-width:520px){
+  .form-row{grid-template-columns:1fr}
+  .form-row-3{grid-template-columns:1fr 1fr}
+  main{padding:12px}
+}
 </style>
 </head>
 <body>
 <div id="app">
   <div class="topbar">
-    <div>
-      <div class="topbar h1" style="font-size:17px;font-weight:500">🧵 Controle de Produção</div>
-      <div class="topbar-sub" id="topbar-sub">Conectar ao Google Sheets</div>
+    <div class="topbar-brand">
+      <img class="topbar-logo" id="topbar-logo" src="" alt="Logo">
+      <div>
+        <div class="topbar-title" id="topbar-title">🧵 Controle de Produção</div>
+        <div class="topbar-sub" id="topbar-sub">carregando...</div>
+      </div>
     </div>
-    <button class="btn-config" onclick="openConfig()" title="Configurações">⚙</button>
+    <div class="topbar-actions">
+      <button class="btn-icon" onclick="syncAll()" title="Sincronizar">↻</button>
+      <button class="btn-icon" onclick="openConfig()" title="Configurações">⚙</button>
+    </div>
   </div>
-  
-  <nav>
+
+  <nav id="main-nav">
     <button class="nav-btn active" onclick="goTo('dashboard')">Dashboard</button>
-    <button class="nav-btn" onclick="goTo('producao')">Entrada de produção</button>
+    <button class="nav-btn" onclick="goTo('cortes')">Cortes</button>
+    <button class="nav-btn" onclick="goTo('distribuicao')">Distribuição</button>
+    <button class="nav-btn" onclick="goTo('recebimento')">Recebimento</button>
     <button class="nav-btn" onclick="goTo('pagamentos')">Pagamentos</button>
     <button class="nav-btn" onclick="goTo('oficinas')">Oficinas</button>
     <button class="nav-btn" onclick="goTo('produtos')">Produtos</button>
     <button class="nav-btn" onclick="goTo('historico')">Histórico</button>
     <button class="nav-btn" onclick="goTo('importar')">Importar</button>
   </nav>
-  
+
   <main id="main-content"></main>
 </div>
 
-<!-- Modal genérico -->
-<div class="modal-bg" id="modal">
-  <div class="modal" id="modal-content"></div>
-</div>
-
-<!-- Toast -->
+<div class="modal-bg" id="modal"><div class="modal" id="modal-content"></div></div>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-// ═══════════════════════════════════════
-// CONFIG & STATE
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
+// STATE & CONFIG
+// ════════════════════════════════════════
 let GAS_URL = localStorage.getItem('gas_url') || '';
 let currentScreen = 'dashboard';
 
-// Cache local (fallback offline)
+// Paleta de cores pré-definidas para tecidos
+const COR_PALETTE = ['#E24B4A','#378ADD','#1D9E75','#EF9F27','#D4537E','#7F77DD','#888780','#1a1a18','#ffffff','#F5C4B3','#9FE1CB','#B5D4F4'];
+
+// Tema da marca (carregado do localStorage)
+let tema = JSON.parse(localStorage.getItem('tema') || '{"cor":"#3C3489","nome":"Controle de Produção","logo":""}');
+
+// Estado — mantém compatibilidade com v1 (producao = recebimentos antigos)
 let state = {
-  oficinas: JSON.parse(localStorage.getItem('oficinas') || '[]'),
-  produtos: JSON.parse(localStorage.getItem('produtos') || '[]'),
-  producao: JSON.parse(localStorage.getItem('producao') || '[]'),
+  oficinas:   JSON.parse(localStorage.getItem('oficinas')   || '[]'),
+  produtos:   JSON.parse(localStorage.getItem('produtos')   || '[]'),
+  producao:   JSON.parse(localStorage.getItem('producao')   || '[]'), // legado = recebimentos
   pagamentos: JSON.parse(localStorage.getItem('pagamentos') || '[]'),
+  cortes:     JSON.parse(localStorage.getItem('cortes')     || '[]'),
+  lotes:      JSON.parse(localStorage.getItem('lotes')      || '[]'),
+  recebimentos: JSON.parse(localStorage.getItem('recebimentos') || '[]'),
+  precos:     JSON.parse(localStorage.getItem('precos')     || '{}'), // {oficina_id_produto_id: valor}
 };
 
 function saveLocal() {
-  localStorage.setItem('oficinas', JSON.stringify(state.oficinas));
-  localStorage.setItem('produtos', JSON.stringify(state.produtos));
-  localStorage.setItem('producao', JSON.stringify(state.producao));
-  localStorage.setItem('pagamentos', JSON.stringify(state.pagamentos));
+  ['oficinas','produtos','producao','pagamentos','cortes','lotes','recebimentos','precos'].forEach(k=>{
+    localStorage.setItem(k, JSON.stringify(state[k]));
+  });
 }
 
-// ═══════════════════════════════════════
-// API GOOGLE APPS SCRIPT
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
+// TEMA
+// ════════════════════════════════════════
+function aplicarTema() {
+  const cor = tema.cor || '#3C3489';
+  // Derivar variações
+  document.documentElement.style.setProperty('--brand', cor);
+  document.documentElement.style.setProperty('--brand-dark', escurecer(cor, 20));
+  document.documentElement.style.setProperty('--brand-light', clarear(cor, 90));
+  document.documentElement.style.setProperty('--brand-mid', clarear(cor, 40));
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', cor);
+  document.getElementById('topbar-title').textContent = tema.nome || '🧵 Controle de Produção';
+  document.title = tema.nome || 'Produção';
+  const logo = document.getElementById('topbar-logo');
+  if (tema.logo) { logo.src = tema.logo; logo.classList.add('visible'); }
+  else logo.classList.remove('visible');
+}
+
+function hexToHSL(hex) {
+  let r=parseInt(hex.slice(1,3),16)/255, g=parseInt(hex.slice(3,5),16)/255, b=parseInt(hex.slice(5,7),16)/255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b); let h,s,l=(max+min)/2;
+  if(max===min){h=s=0}else{const d=max-min;s=l>.5?d/(2-max-min):d/(max+min);
+    h=max===r?(g-b)/d+(g<b?6:0):max===g?(b-r)/d+2:(r-g)/d+4;h/=6;}
+  return [h*360,s*100,l*100];
+}
+function hslToHex(h,s,l){h/=360;s/=100;l/=100;
+  const hue2rgb=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};
+  let r,g,b;if(s===0){r=g=b=l}else{const q=l<.5?l*(1+s):l+s-l*s,p=2*l-q;r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b=hue2rgb(p,q,h-1/3);}
+  return '#'+[r,g,b].map(x=>Math.round(x*255).toString(16).padStart(2,'0')).join('');}
+function escurecer(hex,pct){const [h,s,l]=hexToHSL(hex);return hslToHex(h,s,Math.max(0,l-pct));}
+function clarear(hex,pct){const [h,s,l]=hexToHSL(hex);return hslToHex(h,Math.max(0,s-pct*.5),Math.min(97,l+pct));}
+
+// ════════════════════════════════════════
+// API
+// ════════════════════════════════════════
 async function api(action, data={}) {
-  if (!GAS_URL) { toast('Configure a URL do Apps Script primeiro', 'warn'); return null; }
+  if (!GAS_URL) return null;
   try {
-    const r = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify({action, ...data}),
-    });
+    const r = await fetch(GAS_URL, {method:'POST', body: JSON.stringify({action,...data})});
     const json = await r.json();
     if (json.error) throw new Error(json.error);
     return json;
-  } catch(e) {
-    toast('Erro na conexão: ' + e.message, 'danger');
-    return null;
-  }
+  } catch(e) { toast('Erro: ' + e.message, 'danger'); return null; }
 }
 
 async function syncAll() {
-  if (!GAS_URL) return;
+  if (!GAS_URL) { document.getElementById('topbar-sub').textContent = 'Offline — configure o Sheets'; return; }
+  document.getElementById('topbar-sub').textContent = 'Sincronizando...';
   const r = await api('getAll');
-  if (!r) return;
-  state.oficinas = r.oficinas || state.oficinas;
-  state.produtos = r.produtos || state.produtos;
-  state.producao = r.producao || state.producao;
-  state.pagamentos = r.pagamentos || state.pagamentos;
+  if (!r) { document.getElementById('topbar-sub').textContent = 'Erro na conexão'; return; }
+  ['oficinas','produtos','producao','pagamentos','cortes','lotes','recebimentos'].forEach(k=>{
+    if (r[k]) state[k] = r[k];
+  });
+  if (r.precos) state.precos = r.precos;
   saveLocal();
-  document.getElementById('topbar-sub').textContent = 'Sincronizado agora';
+  document.getElementById('topbar-sub').textContent = 'Sincronizado · ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   renderScreen(currentScreen);
 }
 
-// ═══════════════════════════════════════
-// NAV
-// ═══════════════════════════════════════
-function goTo(screen) {
-  currentScreen = screen;
-  document.querySelectorAll('.nav-btn').forEach((b,i) => {
-    const screens = ['dashboard','producao','pagamentos','oficinas','produtos','historico','importar'];
-    b.classList.toggle('active', screens[i] === screen);
-  });
-  renderScreen(screen);
-}
-
-function renderScreen(screen) {
-  const el = document.getElementById('main-content');
-  const renders = {
-    dashboard: renderDashboard,
-    producao: renderProducao,
-    pagamentos: renderPagamentos,
-    oficinas: renderOficinas,
-    produtos: renderProdutos,
-    historico: renderHistorico,
-    importar: renderImportar,
-  };
-  if (renders[screen]) el.innerHTML = renders[screen]();
-  else el.innerHTML = '<p>Tela não encontrada</p>';
-}
-
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
 // HELPERS
-// ═══════════════════════════════════════
-const fmt = v => 'R$ ' + Number(v||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+// ════════════════════════════════════════
+const fmt = v => 'R$ ' + Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtN = v => Number(v||0).toLocaleString('pt-BR');
-function now() { return new Date().toLocaleDateString('pt-BR'); }
-function uuid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function uuid() { return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function getOficina(id) { return state.oficinas.find(o=>o.id===id)||{nome:'?'}; }
+function getProduto(id) { return state.produtos.find(p=>p.id===id)||{nome:'?',valor:0}; }
+function getPreco(oficina_id, produto_id) {
+  const key = oficina_id+'_'+produto_id;
+  if (state.precos[key] !== undefined) return Number(state.precos[key]);
+  const pr = getProduto(produto_id);
+  return Number(pr.valor||0);
+}
 
-function getOficina(id) { return state.oficinas.find(o=>o.id===id) || {nome:'?'}; }
-function getProduto(id) { return state.produtos.find(p=>p.id===id) || {nome:'?', valor:0}; }
+function saldoCostura(id) {
+  // Soma recebimentos (nova tabela) + legado producao
+  const rec = state.recebimentos.filter(r=>r.oficina_id===id).reduce((s,r)=>{
+    return s + (Number(r.quantidade_ok)||0) * getPreco(id, r.produto_id);
+  },0);
+  const leg = state.producao.filter(p=>p.oficina_id===id).reduce((s,p)=>{
+    return s + (Number(p.quantidade)||0) * getPreco(id, p.produto_id);
+  },0);
+  const pago = state.pagamentos.filter(p=>p.oficina_id===id && p.tipo!=='corte').reduce((s,p)=>s+Number(p.valor||0),0);
+  return rec + leg - pago;
+}
 
-function saldoOficina(id) {
-  const prod = state.producao.filter(p=>p.oficina_id===id).reduce((s,p)=>{
-    const prod = getProduto(p.produto_id);
-    return s + (Number(p.quantidade)||0) * (Number(prod.valor)||0);
-  }, 0);
-  const pago = state.pagamentos.filter(p=>p.oficina_id===id).reduce((s,p)=>s+(Number(p.valor)||0), 0);
-  return prod - pago;
+function saldoCorte(id) {
+  const cortado = state.cortes.filter(c=>c.cortador_id===id).reduce((s,c)=>s+Number(c.valor_total||0),0);
+  const pago = state.pagamentos.filter(p=>p.oficina_id===id && p.tipo==='corte').reduce((s,p)=>s+Number(p.valor||0),0);
+  return cortado - pago;
 }
 
 function toast(msg, type='success') {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.style.background = type === 'success' ? '#0F6E56' : type === 'danger' ? '#A32D2D' : '#854F0B';
+  t.style.background = type==='success'?'#0F6E56':type==='danger'?'#A32D2D':'#854F0B';
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3000);
+  setTimeout(()=>t.classList.remove('show'), 2800);
 }
 
 function openModal(html) {
@@ -286,285 +318,656 @@ function openModal(html) {
   document.getElementById('modal').classList.add('open');
 }
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
-document.getElementById('modal').addEventListener('click', e => { if(e.target.id==='modal') closeModal(); });
+document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') closeModal(); });
 
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
+// NAV
+// ════════════════════════════════════════
+const SCREENS = ['dashboard','cortes','distribuicao','recebimento','pagamentos','oficinas','produtos','historico','importar'];
+function goTo(screen) {
+  currentScreen = screen;
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active', SCREENS[i]===screen));
+  renderScreen(screen);
+}
+function renderScreen(s) {
+  const el = document.getElementById('main-content');
+  const map = {dashboard:renderDashboard,cortes:renderCortes,distribuicao:renderDistribuicao,recebimento:renderRecebimento,pagamentos:renderPagamentos,oficinas:renderOficinas,produtos:renderProdutos,historico:renderHistorico,importar:renderImportar};
+  el.innerHTML = (map[s]||renderDashboard)();
+  el.querySelectorAll('script').forEach(s=>{const n=document.createElement('script');n.textContent=s.textContent;s.replaceWith(n);});
+}
+
+// ════════════════════════════════════════
 // DASHBOARD
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
 function renderDashboard() {
-  const totalProd = state.producao.reduce((s,p)=>{
-    const prod = getProduto(p.produto_id);
-    return s + (Number(p.quantidade)||0) * (Number(prod.valor)||0);
-  }, 0);
-  const totalPago = state.pagamentos.reduce((s,p)=>s+(Number(p.valor)||0), 0);
-  const totalDever = totalProd - totalPago;
-  const totalPecas = state.producao.reduce((s,p)=>s+(Number(p.quantidade)||0), 0);
+  const totalCostura = state.oficinas.reduce((s,o)=>s+saldoCostura(o.id),0);
+  const totalCorte = state.oficinas.reduce((s,o)=>s+saldoCorte(o.id),0);
+  const totalDever = totalCostura + totalCorte;
 
-  const saldosOficinas = state.oficinas.map(o=>({
-    ...o, saldo: saldoOficina(o.id)
-  })).sort((a,b)=>b.saldo-a.saldo);
+  const totalPecasCortadas = state.cortes.reduce((s,c)=>{
+    const grade = c.grade||{};
+    return s + Object.values(grade).reduce((a,b)=>a+Number(b||0),0);
+  },0);
+  const totalPecasRec = state.recebimentos.reduce((s,r)=>s+Number(r.quantidade_ok||0),0)
+                      + state.producao.reduce((s,p)=>s+Number(p.quantidade||0),0);
 
-  const recentes = [...state.producao].sort((a,b)=>b.id?.localeCompare?.(a.id)||0).slice(0,5);
+  const saldos = state.oficinas.map(o=>({...o, sc:saldoCostura(o.id), sk:saldoCorte(o.id)}))
+    .sort((a,b)=>(b.sc+b.sk)-(a.sc+a.sk));
+
+  const recentes = [...state.recebimentos,...state.producao].sort((a,b)=>(b.data||'').localeCompare(a.data||'')).slice(0,5);
 
   return `
   <div class="stats">
     <div class="stat"><div class="stat-label">Total a pagar</div><div class="stat-value red">${fmt(totalDever)}</div></div>
-    <div class="stat"><div class="stat-label">Total produzido</div><div class="stat-value purple">${fmt(totalProd)}</div></div>
-    <div class="stat"><div class="stat-label">Total pago</div><div class="stat-value teal">${fmt(totalPago)}</div></div>
-    <div class="stat"><div class="stat-label">Peças produzidas</div><div class="stat-value amber">${fmtN(totalPecas)}</div></div>
+    <div class="stat"><div class="stat-label">Costura a pagar</div><div class="stat-value brand">${fmt(totalCostura)}</div></div>
+    <div class="stat"><div class="stat-label">Corte a pagar</div><div class="stat-value coral">${fmt(totalCorte)}</div></div>
+    <div class="stat"><div class="stat-label">Peças cortadas</div><div class="stat-value amber">${fmtN(totalPecasCortadas)}</div></div>
+    <div class="stat"><div class="stat-label">Peças recebidas</div><div class="stat-value teal">${fmtN(totalPecasRec)}</div></div>
   </div>
 
   <div class="card">
     <div class="card-title">Saldo por oficina</div>
-    ${saldosOficinas.length === 0 ? '<div class="empty"><div class="empty-icon">🏭</div><p>Nenhuma oficina cadastrada ainda</p><button class="btn btn-primary" onclick="goTo(\'oficinas\')">Cadastrar oficina</button></div>' :
-      saldosOficinas.map(o=>`
-      <div class="oficina-row">
-        <div>
-          <div class="oficina-nome">${o.nome}</div>
-          <div class="oficina-meta">${o.cidade||''}</div>
+    ${saldos.length===0?'<div class="empty"><div class="empty-icon">🏭</div><p>Nenhuma oficina ainda</p><button class="btn btn-primary" onclick="goTo(\'oficinas\')">Cadastrar oficina</button></div>':
+    saldos.map(o=>`
+    <div class="row-item">
+      <div>
+        <div class="row-nome">${o.nome}</div>
+        <div class="row-meta">${[o.cidade].filter(Boolean).join(' · ')}
+          ${o.sk>0?` · <span style="color:var(--coral)">Corte: ${fmt(o.sk)}</span>`:''}
         </div>
-        <div style="text-align:right">
-          <div class="saldo-val ${o.saldo>0?'red':o.saldo<0?'teal':'gray'}">${fmt(o.saldo)}</div>
-          <div style="font-size:11px;color:var(--text-muted)">${o.saldo>0?'a pagar':o.saldo<0?'a receber':'em dia'}</div>
-        </div>
-      </div>`).join('')
-    }
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:15px;font-weight:500;color:${(o.sc+o.sk)>0?'var(--red)':'var(--teal)'}">${fmt(o.sc+o.sk)}</div>
+        <div style="font-size:11px;color:var(--text-muted)">${(o.sc+o.sk)>0?'a pagar':'em dia'}</div>
+      </div>
+    </div>`).join('')}
   </div>
 
-  ${recentes.length > 0 ? `
+  ${recentes.length>0?`
   <div class="card">
-    <div class="card-title">Últimas entradas</div>
-    <div class="table-wrap">
-    <table>
-      <thead><tr><th>Data</th><th>Oficina</th><th>Produto</th><th>Qtd</th><th>Valor</th></tr></thead>
-      <tbody>${recentes.map(p=>{
-        const prod = getProduto(p.produto_id);
-        return `<tr>
-          <td>${p.data||'-'}</td>
-          <td>${getOficina(p.oficina_id).nome}</td>
-          <td>${prod.nome}</td>
-          <td>${fmtN(p.quantidade)}</td>
-          <td>${fmt((Number(p.quantidade)||0)*(Number(prod.valor)||0))}</td>
-        </tr>`;
+    <div class="card-title">Últimos recebimentos</div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Data</th><th>Oficina</th><th>Produto</th><th>Qtd OK</th><th>Valor</th></tr></thead>
+      <tbody>${recentes.map(r=>{
+        const pr=getProduto(r.produto_id||r.produto_id);
+        const qtd=Number(r.quantidade_ok||r.quantidade||0);
+        const val=qtd*getPreco(r.oficina_id,r.produto_id);
+        return `<tr><td>${r.data||'—'}</td><td>${getOficina(r.oficina_id).nome}</td><td>${pr.nome}</td><td>${fmtN(qtd)}</td><td>${fmt(val)}</td></tr>`;
       }).join('')}</tbody>
-    </table>
-    </div>
-  </div>` : ''}
-
-  <button class="btn btn-secondary btn-full" onclick="syncAll()" style="margin-top:4px">🔄 Sincronizar com Google Sheets</button>
+    </table></div>
+  </div>`:''}
   `;
 }
 
-// ═══════════════════════════════════════
-// ENTRADA DE PRODUÇÃO
-// ═══════════════════════════════════════
-function renderProducao() {
-  if (state.oficinas.length === 0 || state.produtos.length === 0) {
-    return `<div class="alert alert-warn">⚠️ Cadastre pelo menos uma oficina e um produto antes de lançar produção.</div>
-    <div style="display:flex;gap:10px"><button class="btn btn-primary" onclick="goTo('oficinas')">Cadastrar oficina</button><button class="btn btn-secondary" onclick="goTo('produtos')">Cadastrar produto</button></div>`;
-  }
+// ════════════════════════════════════════
+// CORTES
+// ════════════════════════════════════════
+const TAMANHOS_PADRAO = ['PP','P','M','G','GG','XG'];
 
-  const entradas = [...state.producao].reverse().slice(0,50);
-
+function renderCortes() {
+  const cortes = [...state.cortes].reverse().slice(0,40);
   return `
   <div class="card">
-    <div class="card-title">Nova entrada de produção</div>
+    <div class="card-title">Registrar corte</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Cortador (oficina)</label>
+        <select id="ct-cortador">
+          <option value="">Selecione...</option>
+          ${state.oficinas.map(o=>`<option value="${o.id}">${o.nome}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Modelo / Referência</label>
+        <select id="ct-produto">
+          <option value="">Selecione o produto...</option>
+          ${state.produtos.map(p=>`<option value="${p.id}">${p.nome}${p.ref?' ('+p.ref+')':''}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Data do corte</label>
+        <input type="date" id="ct-data" value="${new Date().toISOString().split('T')[0]}">
+      </div>
+      <div class="form-group">
+        <label>Valor pago por peça cortada (R$)</label>
+        <input type="number" id="ct-valor-peca" step="0.01" placeholder="0,00">
+      </div>
+    </div>
+
     <div class="form-group">
-      <label>Oficina</label>
-      <select id="p-oficina" onchange="calcValor()">
+      <label>Cores de tecido cortadas</label>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input id="ct-cor-input" placeholder="Nome da cor (ex: Rosa Bebê)" style="flex:1;min-width:160px">
+        <input type="color" id="ct-cor-hex" value="#E24B4A" style="width:40px;height:36px;padding:2px;border-radius:6px;cursor:pointer">
+        <button class="btn btn-secondary btn-sm" onclick="adicionarCor()">+ Cor</button>
+      </div>
+      <div id="ct-cores-lista" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px"></div>
+    </div>
+
+    <div class="form-group" id="ct-grade-wrap" style="display:none">
+      <label>Grade de peças cortadas por tamanho</label>
+      <div id="ct-grade-container"></div>
+    </div>
+
+    <div id="ct-total-wrap" style="display:none;margin-bottom:12px">
+      <div style="font-size:13px;color:var(--text-muted)">Total de peças: <strong id="ct-total-pecas">0</strong> · Valor total: <strong id="ct-total-val">R$ 0,00</strong></div>
+    </div>
+
+    <div class="form-group">
+      <label>Observação</label>
+      <textarea id="ct-obs" placeholder="Audaces lote #, tecido, observações..."></textarea>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="salvarCorte()">Registrar corte</button>
+  </div>
+
+  ${cortes.length>0?`
+  <div class="card">
+    <div class="card-title">Cortes registrados</div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Data</th><th>Cortador</th><th>Modelo</th><th>Cores</th><th>Peças</th><th>Valor</th><th></th></tr></thead>
+      <tbody>${cortes.map(c=>{
+        const grade=c.grade||{};
+        const totalPecas=Object.values(grade).reduce((s,v)=>s+Number(v||0),0);
+        return `<tr>
+          <td>${c.data||'—'}</td>
+          <td>${getOficina(c.cortador_id).nome}</td>
+          <td>${getProduto(c.produto_id).nome}</td>
+          <td>${(c.cores||[]).map(cor=>`<span class="swatch" style="background:${cor.hex||'#888'}"></span>${cor.nome}`).join(', ')}</td>
+          <td>${fmtN(totalPecas)}</td>
+          <td>${fmt(c.valor_total||0)}</td>
+          <td><button class="btn btn-secondary btn-sm" onclick="verCorte('${c.id}')">ver</button>
+              <button class="btn btn-danger btn-sm" onclick="excluirCorte('${c.id}')">✕</button></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>
+  </div>`:''}
+
+  <script>
+  let ctCores = [];
+  function adicionarCor() {
+    const nome = document.getElementById('ct-cor-input').value.trim();
+    const hex = document.getElementById('ct-cor-hex').value;
+    if (!nome) { toast('Digite o nome da cor','warn'); return; }
+    ctCores.push({nome, hex});
+    document.getElementById('ct-cor-input').value = '';
+    renderCores();
+    renderGrade();
+  }
+  function removerCor(i) { ctCores.splice(i,1); renderCores(); renderGrade(); }
+  function renderCores() {
+    document.getElementById('ct-cores-lista').innerHTML = ctCores.map((c,i)=>
+      `<span class="lote-chip"><span class="swatch" style="background:${c.hex}"></span>${c.nome}<button onclick="removerCor(${i})" style="background:none;border:none;cursor:pointer;color:var(--brand);font-size:13px;padding:0 0 0 4px">✕</button></span>`
+    ).join('');
+  }
+  function renderGrade() {
+    const wrap = document.getElementById('ct-grade-wrap');
+    const container = document.getElementById('ct-grade-container');
+    const totalWrap = document.getElementById('ct-total-wrap');
+    if (ctCores.length===0) { wrap.style.display='none'; totalWrap.style.display='none'; return; }
+    wrap.style.display='block'; totalWrap.style.display='block';
+    const tams = ${JSON.stringify(TAMANHOS_PADRAO)};
+    let html = '<table class="grade-table"><thead><tr><th>Cor \\ Tam</th>';
+    tams.forEach(t=>html+=`<th>${t}</th>`);
+    html += '<th>Total</th></tr></thead><tbody>';
+    ctCores.forEach((cor,ci)=>{
+      html += `<tr><td><span class="swatch" style="background:${cor.hex}"></span>${cor.nome}</td>`;
+      tams.forEach(t=>{
+        html += `<td><input type="number" min="0" id="g_${ci}_${t}" value="0" oninput="calcTotalCorte()" style="width:56px"></td>`;
+      });
+      html += `<td id="row_total_${ci}" style="font-weight:500">0</td></tr>`;
+    });
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+  function calcTotalCorte() {
+    const tams = ${JSON.stringify(TAMANHOS_PADRAO)};
+    let grand=0;
+    ctCores.forEach((cor,ci)=>{
+      let rowTotal=0;
+      tams.forEach(t=>{ rowTotal+=Number(document.getElementById('g_'+ci+'_'+t)?.value||0); });
+      const el=document.getElementById('row_total_'+ci);
+      if(el) el.textContent=rowTotal;
+      grand+=rowTotal;
+    });
+    document.getElementById('ct-total-pecas').textContent=grand.toLocaleString('pt-BR');
+    const vp=Number(document.getElementById('ct-valor-peca')?.value||0);
+    document.getElementById('ct-total-val').textContent='R$ '+(grand*vp).toLocaleString('pt-BR',{minimumFractionDigits:2});
+  }
+  document.getElementById('ct-valor-peca')?.addEventListener('input', calcTotalCorte);
+  <\/script>
+  `;
+}
+
+function getGradeFromForm(cores) {
+  const tams = TAMANHOS_PADRAO;
+  const grade = {};
+  cores.forEach((cor,ci)=>{
+    grade[cor.nome] = {};
+    tams.forEach(t=>{
+      const v = Number(document.getElementById(`g_${ci}_${t}`)?.value||0);
+      if(v>0) grade[cor.nome][t] = v;
+    });
+  });
+  return grade;
+}
+
+async function salvarCorte() {
+  const cortador_id = document.getElementById('ct-cortador').value;
+  const produto_id = document.getElementById('ct-produto').value;
+  const data = document.getElementById('ct-data').value;
+  const valor_peca = Number(document.getElementById('ct-valor-peca').value||0);
+  const obs = document.getElementById('ct-obs').value;
+
+  if (!cortador_id||!produto_id) { toast('Selecione cortador e modelo','warn'); return; }
+
+  // Pega cores e grade do escopo inline
+  const coresEl = document.querySelectorAll('#ct-cores-lista .lote-chip');
+  // Usa variável ctCores definida no script inline
+  const coresScript = document.querySelector('#main-content script');
+  // Recupera grade do DOM
+  const cores = [];
+  document.querySelectorAll('#ct-cores-lista .lote-chip').forEach(el=>{
+    const nome = el.textContent.trim().replace('✕','').trim();
+    const swatch = el.querySelector('.swatch');
+    const hex = swatch ? swatch.style.background : '#888';
+    cores.push({nome, hex});
+  });
+
+  const grade = getGradeFromForm(cores);
+  const totalPecas = Object.values(grade).reduce((s,row)=>s+Object.values(row).reduce((a,b)=>a+Number(b||0),0),0);
+  const valor_total = totalPecas * valor_peca;
+
+  const corte = {id:uuid(), cortador_id, produto_id, data, cores, grade, valor_peca, valor_total, obs, lotes_distribuidos:[]};
+  state.cortes.push(corte);
+  saveLocal();
+  if (GAS_URL) await api('addCorte', {row: corte});
+  toast(`Corte registrado — ${fmtN(totalPecas)} peças ✓`);
+  renderScreen('cortes');
+}
+
+function verCorte(id) {
+  const c = state.cortes.find(x=>x.id===id);
+  if (!c) return;
+  const grade = c.grade||{};
+  const tams = TAMANHOS_PADRAO;
+  let gradeHtml = '<table class="grade-table"><thead><tr><th>Cor</th>';
+  tams.forEach(t=>gradeHtml+=`<th>${t}</th>`);
+  gradeHtml+='<th>Total</th></tr></thead><tbody>';
+  (c.cores||[]).forEach(cor=>{
+    const row=grade[cor.nome]||{};
+    const total=Object.values(row).reduce((s,v)=>s+Number(v||0),0);
+    gradeHtml+=`<tr><td><span class="swatch" style="background:${cor.hex||'#888'}"></span>${cor.nome}</td>`;
+    tams.forEach(t=>gradeHtml+=`<td>${row[t]||0}</td>`);
+    gradeHtml+=`<td><strong>${total}</strong></td></tr>`;
+  });
+  gradeHtml+='</tbody></table>';
+  const totalGeral=Object.values(grade).reduce((s,r)=>s+Object.values(r).reduce((a,b)=>a+Number(b||0),0),0);
+  openModal(`
+    <div class="modal-header"><span class="modal-title">Corte — ${getProduto(c.produto_id).nome}</span><button class="btn-close" onclick="closeModal()">✕</button></div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px">${c.data||''} · ${getOficina(c.cortador_id).nome} · ${fmtN(totalGeral)} peças · ${fmt(c.valor_total||0)}</div>
+    ${gradeHtml}
+    ${c.obs?`<div style="margin-top:10px;font-size:13px;color:var(--text-muted)">${c.obs}</div>`:''}
+  `);
+}
+
+async function excluirCorte(id) {
+  if (!confirm('Excluir este corte?')) return;
+  state.cortes = state.cortes.filter(c=>c.id!==id);
+  saveLocal();
+  if (GAS_URL) await api('deleteRow',{sheet:'Cortes',id});
+  toast('Corte excluído');
+  renderScreen('cortes');
+}
+
+// ════════════════════════════════════════
+// DISTRIBUIÇÃO
+// ════════════════════════════════════════
+function renderDistribuicao() {
+  const cortesComSaldo = state.cortes.filter(c=>{
+    const grade=c.grade||{};
+    const total=Object.values(grade).reduce((s,r)=>s+Object.values(r).reduce((a,b)=>a+Number(b||0),0),0);
+    const distrib=(c.lotes_distribuidos||[]).reduce((s,l)=>s+Number(l.quantidade||0),0);
+    return total>distrib;
+  });
+
+  const lotes = [...state.lotes].reverse().slice(0,40);
+
+  return `
+  <div class="alert alert-info">💡 Aqui você distribui as peças cortadas para as oficinas de costura.</div>
+
+  <div class="card">
+    <div class="card-title">Distribuir lote</div>
+    ${cortesComSaldo.length===0?'<p style="font-size:13px;color:var(--text-muted)">Nenhum corte com saldo disponível para distribuir.</p>':`
+    <div class="form-group">
+      <label>Corte de origem</label>
+      <select id="dist-corte" onchange="renderDistGrade()">
+        <option value="">Selecione o corte...</option>
+        ${cortesComSaldo.map(c=>{
+          const grade=c.grade||{};
+          const total=Object.values(grade).reduce((s,r)=>s+Object.values(r).reduce((a,b)=>a+Number(b||0),0),0);
+          const distrib=(c.lotes_distribuidos||[]).reduce((s,l)=>s+Number(l.quantidade||0),0);
+          return `<option value="${c.id}">${c.data||''} · ${getProduto(c.produto_id).nome} · saldo: ${fmtN(total-distrib)} peças</option>`;
+        }).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Oficina de destino</label>
+      <select id="dist-oficina">
         <option value="">Selecione a oficina...</option>
         ${state.oficinas.map(o=>`<option value="${o.id}">${o.nome}</option>`).join('')}
       </select>
     </div>
-    <div class="form-group">
-      <label>Produto</label>
-      <select id="p-produto" onchange="calcValor()">
-        <option value="">Selecione o produto...</option>
-        ${state.produtos.map(p=>`<option value="${p.id}" data-valor="${p.valor}">${p.nome} — ${fmt(p.valor)}/un</option>`).join('')}
-      </select>
-    </div>
     <div class="form-row">
       <div class="form-group">
-        <label>Quantidade</label>
-        <input type="number" id="p-qtd" placeholder="0" min="1" oninput="calcValor()">
+        <label>Data de envio</label>
+        <input type="date" id="dist-data" value="${new Date().toISOString().split('T')[0]}">
       </div>
       <div class="form-group">
-        <label>Data</label>
-        <input type="date" id="p-data" value="${new Date().toISOString().split('T')[0]}">
+        <label>Quantidade total a enviar</label>
+        <input type="number" id="dist-qtd" placeholder="0" min="1">
       </div>
     </div>
+    <div id="dist-grade-info" style="margin-bottom:10px"></div>
     <div class="form-group">
-      <label>Valor total calculado</label>
-      <div id="p-total" style="font-size:20px;font-weight:500;color:var(--purple);padding:8px 0">R$ 0,00</div>
+      <label>Observação</label>
+      <input id="dist-obs" placeholder="Cor, tamanho, prazo...">
     </div>
-    <div class="form-group">
-      <label>Observação (opcional)</label>
-      <textarea id="p-obs" placeholder="Ex: lote com defeito, urgente..."></textarea>
-    </div>
-    <button class="btn btn-primary btn-full" onclick="salvarProducao()">Registrar entrada</button>
+    <button class="btn btn-primary btn-full" onclick="salvarLote()">Enviar lote</button>`}
   </div>
 
-  ${entradas.length > 0 ? `
+  ${lotes.length>0?`
   <div class="card">
-    <div class="card-title">Entradas recentes</div>
-    <div class="table-wrap">
-    <table>
-      <thead><tr><th>Data</th><th>Oficina</th><th>Produto</th><th>Qtd</th><th>Valor</th><th></th></tr></thead>
-      <tbody>${entradas.map(p=>{
-        const prod = getProduto(p.produto_id);
-        const val = (Number(p.quantidade)||0)*(Number(prod.valor)||0);
+    <div class="card-title">Lotes enviados</div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Data</th><th>Corte</th><th>Oficina</th><th>Qtd enviada</th><th>Recebido</th><th>Status</th></tr></thead>
+      <tbody>${lotes.map(l=>{
+        const c=state.cortes.find(x=>x.id===l.corte_id)||{};
+        const recQtd=state.recebimentos.filter(r=>r.lote_id===l.id).reduce((s,r)=>s+Number(r.quantidade_ok||0)+Number(r.quantidade_defeito||0),0);
+        const status=recQtd>=Number(l.quantidade||0)?'Concluído':recQtd>0?'Parcial':'Aguardando';
+        const badgeCls=status==='Concluído'?'badge-teal':status==='Parcial'?'badge-amber':'badge-gray';
         return `<tr>
-          <td>${p.data||'-'}</td>
-          <td>${getOficina(p.oficina_id).nome}</td>
-          <td>${prod.nome}</td>
-          <td>${fmtN(p.quantidade)}</td>
-          <td>${fmt(val)}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="excluirProducao('${p.id}')">✕</button></td>
+          <td>${l.data||'—'}</td>
+          <td>${getProduto(c.produto_id||'').nome}</td>
+          <td>${getOficina(l.oficina_id).nome}</td>
+          <td>${fmtN(l.quantidade)}</td>
+          <td>${fmtN(recQtd)}</td>
+          <td><span class="badge ${badgeCls}">${status}</span></td>
         </tr>`;
       }).join('')}</tbody>
-    </table>
-    </div>
-  </div>` : ''}
+    </table></div>
+  </div>`:''}
+
+  <script>
+  function renderDistGrade() {
+    const id = document.getElementById('dist-corte')?.value;
+    const el = document.getElementById('dist-grade-info');
+    if (!id||!el) return;
+    const c = ${JSON.stringify(state.cortes)}.find(x=>x.id===id);
+    if (!c) return;
+    const grade=c.grade||{};
+    const distrib=(c.lotes_distribuidos||[]).reduce((s,l)=>s+Number(l.quantidade||0),0);
+    let html='<div class="alert alert-info" style="flex-direction:column;align-items:flex-start"><div style="font-weight:500;margin-bottom:6px">Saldo disponível neste corte:</div>';
+    Object.entries(grade).forEach(([cor,tams])=>{
+      const total=Object.values(tams).reduce((s,v)=>s+Number(v||0),0);
+      html+=`<div style="font-size:12px">${cor}: ${Object.entries(tams).map(([t,v])=>`${t}:${v}`).join(', ')} (total: ${total})</div>`;
+    });
+    html+=`<div style="font-size:12px;margin-top:4px;font-weight:500">Já distribuído: ${distrib} peças</div></div>`;
+    el.innerHTML=html;
+  }
+  <\/script>
   `;
 }
 
-function calcValor() {
-  const sel = document.getElementById('p-produto');
-  const qtd = Number(document.getElementById('p-qtd')?.value || 0);
-  const val = Number(sel?.selectedOptions[0]?.dataset?.valor || 0);
-  const total = document.getElementById('p-total');
-  if (total) total.textContent = fmt(qtd * val);
+async function salvarLote() {
+  const corte_id = document.getElementById('dist-corte').value;
+  const oficina_id = document.getElementById('dist-oficina').value;
+  const quantidade = Number(document.getElementById('dist-qtd').value||0);
+  const data = document.getElementById('dist-data').value;
+  const obs = document.getElementById('dist-obs').value;
+
+  if (!corte_id||!oficina_id||!quantidade) { toast('Preencha todos os campos','warn'); return; }
+
+  const corte = state.cortes.find(c=>c.id===corte_id);
+  if (!corte) return;
+  const grade=corte.grade||{};
+  const total=Object.values(grade).reduce((s,r)=>s+Object.values(r).reduce((a,b)=>a+Number(b||0),0),0);
+  const distrib=(corte.lotes_distribuidos||[]).reduce((s,l)=>s+Number(l.quantidade||0),0);
+  if (quantidade > total-distrib) { toast(`Saldo disponível: ${total-distrib} peças`,'warn'); return; }
+
+  const lote = {id:uuid(), corte_id, produto_id: corte.produto_id, oficina_id, quantidade, data, obs};
+  state.lotes.push(lote);
+  if (!corte.lotes_distribuidos) corte.lotes_distribuidos=[];
+  corte.lotes_distribuidos.push({lote_id:lote.id, quantidade, oficina_id});
+  saveLocal();
+  if (GAS_URL) await api('addLote',{row:lote});
+  toast(`Lote de ${fmtN(quantidade)} peças enviado para ${getOficina(oficina_id).nome} ✓`);
+  renderScreen('distribuicao');
 }
 
-async function salvarProducao() {
-  const oficina_id = document.getElementById('p-oficina').value;
-  const produto_id = document.getElementById('p-produto').value;
-  const quantidade = document.getElementById('p-qtd').value;
-  const data = document.getElementById('p-data').value;
-  const obs = document.getElementById('p-obs').value;
+// ════════════════════════════════════════
+// RECEBIMENTO
+// ════════════════════════════════════════
+function renderRecebimento() {
+  const lotesAbertos = state.lotes.filter(l=>{
+    const recQtd=state.recebimentos.filter(r=>r.lote_id===l.id).reduce((s,r)=>s+Number(r.quantidade_ok||0)+Number(r.quantidade_defeito||0),0);
+    return recQtd < Number(l.quantidade||0);
+  });
 
-  if (!oficina_id || !produto_id || !quantidade) { toast('Preencha todos os campos obrigatórios', 'warn'); return; }
+  const recentes = [...state.recebimentos].reverse().slice(0,40);
 
-  const entrada = { id: uuid(), oficina_id, produto_id, quantidade: Number(quantidade), data, obs };
-  state.producao.push(entrada);
-  saveLocal();
+  return `
+  <div class="card">
+    <div class="card-title">Registrar recebimento de costura</div>
+    <div class="form-group">
+      <label>Lote (de qual distribuição vem)</label>
+      <select id="rec-lote" onchange="preencherRecLote()">
+        <option value="">Selecione o lote aberto...</option>
+        ${lotesAbertos.map(l=>{
+          const c=state.cortes.find(x=>x.id===l.corte_id)||{};
+          const recQtd=state.recebimentos.filter(r=>r.lote_id===l.id).reduce((s,r)=>s+Number(r.quantidade_ok||0)+Number(r.quantidade_defeito||0),0);
+          const saldo=Number(l.quantidade||0)-recQtd;
+          return `<option value="${l.id}">${l.data||''} · ${getOficina(l.oficina_id).nome} · ${getProduto(c.produto_id||'').nome} · saldo: ${saldo}</option>`;
+        }).join('')}
+      </select>
+    </div>
+    <div id="rec-lote-info"></div>
+    <div class="form-row-3">
+      <div class="form-group">
+        <label>Data de retorno</label>
+        <input type="date" id="rec-data" value="${new Date().toISOString().split('T')[0]}">
+      </div>
+      <div class="form-group">
+        <label>Quantidade OK</label>
+        <input type="number" id="rec-ok" placeholder="0" min="0" oninput="calcRecTotal()">
+      </div>
+      <div class="form-group">
+        <label>Quantidade defeituosa</label>
+        <input type="number" id="rec-def" placeholder="0" min="0" oninput="calcRecTotal()">
+      </div>
+    </div>
+    <div id="rec-total-info" style="margin-bottom:10px;font-size:13px;color:var(--text-muted)"></div>
+    <div class="form-group">
+      <label>Observação / tipo de defeito</label>
+      <textarea id="rec-obs" placeholder="Costuras abertas, manchas, fora de grade..."></textarea>
+    </div>
+    <button class="btn btn-teal btn-full" onclick="salvarRecebimento()">Confirmar recebimento</button>
+  </div>
 
-  if (GAS_URL) {
-    const r = await api('addProducao', { row: entrada });
-    if (r) toast('Entrada salva no Google Sheets ✓');
-    else toast('Salvo localmente (sem conexão)');
-  } else {
-    toast('Salvo localmente ✓');
+  ${recentes.length>0?`
+  <div class="card">
+    <div class="card-title">Recebimentos registrados</div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Data</th><th>Oficina</th><th>Produto</th><th>OK</th><th>Def.</th><th>Valor</th><th></th></tr></thead>
+      <tbody>${recentes.map(r=>{
+        const lote=state.lotes.find(l=>l.id===r.lote_id)||{};
+        const valor=(Number(r.quantidade_ok||0))*getPreco(r.oficina_id,r.produto_id);
+        return `<tr>
+          <td>${r.data||'—'}</td>
+          <td>${getOficina(r.oficina_id).nome}</td>
+          <td>${getProduto(r.produto_id).nome}</td>
+          <td style="color:var(--teal);font-weight:500">${fmtN(r.quantidade_ok||0)}</td>
+          <td style="color:var(--red)">${fmtN(r.quantidade_defeito||0)}</td>
+          <td>${fmt(valor)}</td>
+          <td><button class="btn btn-danger btn-sm" onclick="excluirRecebimento('${r.id}')">✕</button></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>
+  </div>`:''}
+
+  <script>
+  function preencherRecLote() {
+    const loteId=document.getElementById('rec-lote')?.value;
+    const el=document.getElementById('rec-lote-info');
+    if (!loteId||!el) return;
+    const lote=${JSON.stringify(state.lotes)}.find(l=>l.id===loteId);
+    if (!lote) return;
+    const corte=${JSON.stringify(state.cortes)}.find(c=>c.id===lote.corte_id)||{};
+    const recQtd=${JSON.stringify(state.recebimentos)}.filter(r=>r.lote_id===loteId).reduce((s,r)=>s+Number(r.quantidade_ok||0)+Number(r.quantidade_defeito||0),0);
+    const saldo=Number(lote.quantidade||0)-recQtd;
+    el.innerHTML=\`<div class="alert alert-info">Lote: <strong>\${lote.quantidade} peças</strong> · já conferidas: \${recQtd} · saldo: <strong>\${saldo}</strong></div>\`;
+    window._recLoteData={oficina_id:lote.oficina_id, produto_id:lote.produto_id||corte.produto_id};
   }
-  renderScreen('producao');
+  function calcRecTotal() {
+    const ok=Number(document.getElementById('rec-ok')?.value||0);
+    const def=Number(document.getElementById('rec-def')?.value||0);
+    const el=document.getElementById('rec-total-info');
+    const preco=${JSON.stringify(Object.assign({},state.precos))};
+    if (!window._recLoteData||!el) return;
+    const key=window._recLoteData.oficina_id+'_'+window._recLoteData.produto_id;
+    const val=(preco[key]||0)*ok;
+    const pr=${JSON.stringify(state.produtos)}.find(p=>p.id===window._recLoteData.produto_id)||{valor:0};
+    const v2=(Number(pr.valor)||0)*ok;
+    const valorFinal=val||v2;
+    el.textContent=\`Total recebido: \${ok+def} peças · a pagar: R$ \${valorFinal.toLocaleString('pt-BR',{minimumFractionDigits:2})}\`;
+  }
+  <\/script>
+  `;
 }
 
-async function excluirProducao(id) {
-  if (!confirm('Excluir esta entrada?')) return;
-  state.producao = state.producao.filter(p=>p.id!==id);
+async function salvarRecebimento() {
+  const lote_id = document.getElementById('rec-lote').value;
+  const data = document.getElementById('rec-data').value;
+  const quantidade_ok = Number(document.getElementById('rec-ok').value||0);
+  const quantidade_defeito = Number(document.getElementById('rec-def').value||0);
+  const obs = document.getElementById('rec-obs').value;
+
+  if (!lote_id) { toast('Selecione o lote','warn'); return; }
+
+  const lote = state.lotes.find(l=>l.id===lote_id);
+  const corte = state.cortes.find(c=>c.id===lote?.corte_id)||{};
+  const oficina_id = lote?.oficina_id;
+  const produto_id = lote?.produto_id || corte.produto_id;
+
+  const rec = {id:uuid(), lote_id, corte_id:lote?.corte_id, oficina_id, produto_id, data, quantidade_ok, quantidade_defeito, obs};
+  state.recebimentos.push(rec);
   saveLocal();
-  if (GAS_URL) await api('deleteRow', {sheet:'Producao', id});
-  toast('Entrada excluída');
-  renderScreen('producao');
+  if (GAS_URL) await api('addRecebimento',{row:rec});
+  toast(`Recebimento salvo — ${fmtN(quantidade_ok)} OK, ${fmtN(quantidade_defeito)} defeituosas ✓`);
+  renderScreen('recebimento');
 }
 
-// ═══════════════════════════════════════
+async function excluirRecebimento(id) {
+  if (!confirm('Excluir este recebimento?')) return;
+  state.recebimentos = state.recebimentos.filter(r=>r.id!==id);
+  saveLocal();
+  if (GAS_URL) await api('deleteRow',{sheet:'Recebimentos',id});
+  toast('Excluído');
+  renderScreen('recebimento');
+}
+
+// ════════════════════════════════════════
 // PAGAMENTOS
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
 function renderPagamentos() {
-  if (state.oficinas.length === 0) {
-    return `<div class="alert alert-warn">⚠️ Cadastre oficinas primeiro.</div>`;
-  }
-
-  const pagamentos = [...state.pagamentos].reverse().slice(0,50);
-
+  const pagamentos = [...state.pagamentos].reverse().slice(0,60);
   return `
   <div class="card">
     <div class="card-title">Registrar pagamento</div>
-    <div class="form-group">
-      <label>Oficina</label>
-      <select id="pg-oficina" onchange="mostraSaldoPag()">
-        <option value="">Selecione a oficina...</option>
-        ${state.oficinas.map(o=>`<option value="${o.id}">${o.nome}</option>`).join('')}
-      </select>
-    </div>
-    <div id="saldo-aviso" style="margin-bottom:10px"></div>
     <div class="form-row">
       <div class="form-group">
-        <label>Valor pago (R$)</label>
-        <input type="number" id="pg-valor" placeholder="0,00" step="0.01" min="0">
+        <label>Oficina</label>
+        <select id="pg-oficina" onchange="mostraSaldoPag()">
+          <option value="">Selecione...</option>
+          ${state.oficinas.map(o=>`<option value="${o.id}">${o.nome}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Tipo de pagamento</label>
+        <select id="pg-tipo" onchange="mostraSaldoPag()">
+          <option value="costura">Costura</option>
+          <option value="corte">Corte</option>
+        </select>
+      </div>
+    </div>
+    <div id="pg-saldo-aviso"></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Valor (R$)</label>
+        <input type="number" id="pg-valor" step="0.01" min="0" placeholder="0,00">
       </div>
       <div class="form-group">
         <label>Data</label>
         <input type="date" id="pg-data" value="${new Date().toISOString().split('T')[0]}">
       </div>
     </div>
-    <div class="form-group">
-      <label>Forma de pagamento</label>
-      <select id="pg-forma">
-        <option value="Pix">Pix</option>
-        <option value="Transferência">Transferência</option>
-        <option value="Dinheiro">Dinheiro</option>
-        <option value="Cheque">Cheque</option>
-        <option value="Outro">Outro</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Observação</label>
-      <textarea id="pg-obs" placeholder="Referência, período pago..."></textarea>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Forma</label>
+        <select id="pg-forma">
+          <option>Pix</option><option>Transferência</option><option>Dinheiro</option><option>Cheque</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Observação</label>
+        <input id="pg-obs" placeholder="Período, referência...">
+      </div>
     </div>
     <button class="btn btn-teal btn-full" onclick="salvarPagamento()">Confirmar pagamento</button>
   </div>
 
-  ${pagamentos.length > 0 ? `
+  ${pagamentos.length>0?`
   <div class="card">
     <div class="card-title">Pagamentos realizados</div>
-    <div class="table-wrap">
-    <table>
-      <thead><tr><th>Data</th><th>Oficina</th><th>Valor</th><th>Forma</th><th>Obs</th><th></th></tr></thead>
-      <tbody>${pagamentos.map(p=>`
-        <tr>
-          <td>${p.data||'-'}</td>
-          <td>${getOficina(p.oficina_id).nome}</td>
-          <td style="color:var(--teal);font-weight:500">${fmt(p.valor)}</td>
-          <td><span class="badge badge-teal">${p.forma||'—'}</span></td>
-          <td style="color:var(--text-muted)">${p.obs||'—'}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="excluirPagamento('${p.id}')">✕</button></td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
-    </div>
-  </div>` : ''}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Data</th><th>Oficina</th><th>Tipo</th><th>Valor</th><th>Forma</th><th>Obs</th><th></th></tr></thead>
+      <tbody>${pagamentos.map(p=>`<tr>
+        <td>${p.data||'—'}</td>
+        <td>${getOficina(p.oficina_id).nome}</td>
+        <td><span class="badge ${p.tipo==='corte'?'badge-coral':'badge-brand'}">${p.tipo||'costura'}</span></td>
+        <td style="color:var(--teal);font-weight:500">${fmt(p.valor)}</td>
+        <td>${p.forma||'—'}</td>
+        <td style="color:var(--text-muted);font-size:12px">${p.obs||'—'}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="excluirPagamento('${p.id}')">✕</button></td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+  </div>`:''}
   `;
 }
 
 function mostraSaldoPag() {
-  const id = document.getElementById('pg-oficina').value;
-  const el = document.getElementById('saldo-aviso');
-  if (!id || !el) return;
-  const saldo = saldoOficina(id);
-  el.innerHTML = `<div class="alert ${saldo>0?'alert-danger':'alert-success'}">Saldo atual: <strong>${fmt(saldo)}</strong> ${saldo>0?'a pagar':'✓ em dia'}</div>`;
+  const id = document.getElementById('pg-oficina')?.value;
+  const tipo = document.getElementById('pg-tipo')?.value;
+  const el = document.getElementById('pg-saldo-aviso');
+  if (!id||!el) return;
+  const saldo = tipo==='corte' ? saldoCorte(id) : saldoCostura(id);
+  el.innerHTML = `<div class="alert ${saldo>0?'alert-danger':'alert-success'}">Saldo de ${tipo}: <strong>${fmt(saldo)}</strong> ${saldo>0?'a pagar':'✓ em dia'}</div>`;
 }
 
 async function salvarPagamento() {
   const oficina_id = document.getElementById('pg-oficina').value;
   const valor = document.getElementById('pg-valor').value;
   const data = document.getElementById('pg-data').value;
+  const tipo = document.getElementById('pg-tipo').value;
   const forma = document.getElementById('pg-forma').value;
   const obs = document.getElementById('pg-obs').value;
-
-  if (!oficina_id || !valor) { toast('Preencha oficina e valor', 'warn'); return; }
-
-  const pag = { id: uuid(), oficina_id, valor: Number(valor), data, forma, obs };
+  if (!oficina_id||!valor) { toast('Preencha oficina e valor','warn'); return; }
+  const pag = {id:uuid(), oficina_id, valor:Number(valor), data, tipo, forma, obs};
   state.pagamentos.push(pag);
   saveLocal();
-
-  if (GAS_URL) {
-    const r = await api('addPagamento', { row: pag });
-    if (r) toast('Pagamento salvo no Google Sheets ✓');
-  } else {
-    toast('Pagamento salvo localmente ✓');
-  }
+  if (GAS_URL) await api('addPagamento',{row:pag});
+  toast('Pagamento salvo ✓');
   renderScreen('pagamentos');
 }
 
@@ -572,539 +975,554 @@ async function excluirPagamento(id) {
   if (!confirm('Excluir este pagamento?')) return;
   state.pagamentos = state.pagamentos.filter(p=>p.id!==id);
   saveLocal();
-  if (GAS_URL) await api('deleteRow', {sheet:'Pagamentos', id});
-  toast('Pagamento excluído');
+  if (GAS_URL) await api('deleteRow',{sheet:'Pagamentos',id});
+  toast('Excluído');
   renderScreen('pagamentos');
 }
 
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
 // OFICINAS
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
 function renderOficinas() {
   return `
   <div class="card">
     <div class="card-title">Cadastrar oficina</div>
     <div class="form-row">
-      <div class="form-group">
-        <label>Nome da oficina *</label>
-        <input id="of-nome" placeholder="Ex: Costurinha da Maria">
-      </div>
-      <div class="form-group">
-        <label>Responsável</label>
-        <input id="of-resp" placeholder="Nome do responsável">
-      </div>
+      <div class="form-group"><label>Nome *</label><input id="of-nome" placeholder="Ex: Costurinha da Maria"></div>
+      <div class="form-group"><label>Responsável</label><input id="of-resp" placeholder="Nome do responsável"></div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label>Telefone / WhatsApp</label>
-        <input id="of-tel" placeholder="(85) 9 0000-0000">
-      </div>
-      <div class="form-group">
-        <label>Cidade</label>
-        <input id="of-cidade" placeholder="Fortaleza, CE">
-      </div>
+      <div class="form-group"><label>Telefone / WhatsApp</label><input id="of-tel" placeholder="(85) 9 0000-0000"></div>
+      <div class="form-group"><label>Cidade</label><input id="of-cidade" placeholder="Fortaleza, CE"></div>
     </div>
-    <div class="form-group">
-      <label>Chave Pix</label>
-      <input id="of-pix" placeholder="CPF, CNPJ, e-mail ou telefone">
+    <div class="form-row">
+      <div class="form-group"><label>Chave Pix</label><input id="of-pix"></div>
+      <div class="form-group">
+        <label>Tipo de serviço</label>
+        <select id="of-tipo">
+          <option value="costura">Costura</option>
+          <option value="corte">Corte</option>
+          <option value="ambos">Ambos</option>
+        </select>
+      </div>
     </div>
     <button class="btn btn-primary btn-full" onclick="salvarOficina()">Cadastrar oficina</button>
   </div>
 
-  ${state.oficinas.length > 0 ? `
+  ${state.oficinas.length>0?`
   <div class="card">
     <div class="card-title">Oficinas cadastradas</div>
     ${state.oficinas.map(o=>`
-    <div class="oficina-row">
+    <div class="row-item">
       <div>
-        <div class="oficina-nome">${o.nome}</div>
-        <div class="oficina-meta">${[o.responsavel, o.telefone, o.cidade].filter(Boolean).join(' · ')}</div>
-        ${o.pix?`<div class="oficina-meta">Pix: ${o.pix}</div>`:''}
+        <div class="row-nome">${o.nome} <span class="badge badge-gray" style="font-size:10px">${o.tipo||'costura'}</span></div>
+        <div class="row-meta">${[o.responsavel,o.telefone,o.cidade].filter(Boolean).join(' · ')}</div>
+        ${o.pix?`<div class="row-meta">Pix: ${o.pix}</div>`:''}
       </div>
-      <div style="display:flex;gap:8px;align-items:center">
+      <div style="display:flex;align-items:center;gap:8px">
         <div style="text-align:right">
-          <div style="font-size:14px;font-weight:500;color:${saldoOficina(o.id)>0?'var(--red)':'var(--teal)'}">${fmt(saldoOficina(o.id))}</div>
-          <div style="font-size:11px;color:var(--text-muted)">saldo</div>
+          <div style="font-size:13px;font-weight:500;color:${(saldoCostura(o.id)+saldoCorte(o.id))>0?'var(--red)':'var(--teal)'}">${fmt(saldoCostura(o.id)+saldoCorte(o.id))}</div>
+          <div style="font-size:11px;color:var(--text-muted)">saldo total</div>
         </div>
         <button class="btn btn-danger btn-sm" onclick="excluirOficina('${o.id}')">✕</button>
       </div>
     </div>`).join('')}
-  </div>` : ''}
+  </div>`:''}
   `;
 }
 
 async function salvarOficina() {
   const nome = document.getElementById('of-nome').value.trim();
-  if (!nome) { toast('Digite o nome da oficina', 'warn'); return; }
-
-  const of = {
-    id: uuid(),
-    nome,
-    responsavel: document.getElementById('of-resp').value.trim(),
-    telefone: document.getElementById('of-tel').value.trim(),
-    cidade: document.getElementById('of-cidade').value.trim(),
-    pix: document.getElementById('of-pix').value.trim(),
-  };
-
+  if (!nome) { toast('Digite o nome','warn'); return; }
+  const of = {id:uuid(), nome, responsavel:document.getElementById('of-resp').value.trim(), telefone:document.getElementById('of-tel').value.trim(), cidade:document.getElementById('of-cidade').value.trim(), pix:document.getElementById('of-pix').value.trim(), tipo:document.getElementById('of-tipo').value};
   state.oficinas.push(of);
   saveLocal();
-
-  if (GAS_URL) {
-    await api('addOficina', { row: of });
-    toast('Oficina salva no Google Sheets ✓');
-  } else {
-    toast('Oficina salva localmente ✓');
-  }
+  if (GAS_URL) await api('addOficina',{row:of});
+  toast('Oficina salva ✓');
   renderScreen('oficinas');
 }
 
 async function excluirOficina(id) {
-  const saldo = saldoOficina(id);
-  if (saldo > 0 && !confirm(`Esta oficina tem saldo de ${fmt(saldo)} a pagar. Confirma exclusão?`)) return;
+  if (!confirm('Excluir esta oficina?')) return;
   state.oficinas = state.oficinas.filter(o=>o.id!==id);
   saveLocal();
-  if (GAS_URL) await api('deleteRow', {sheet:'Oficinas', id});
-  toast('Oficina removida');
+  if (GAS_URL) await api('deleteRow',{sheet:'Oficinas',id});
+  toast('Removida');
   renderScreen('oficinas');
 }
 
-// ═══════════════════════════════════════
-// PRODUTOS
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
+// PRODUTOS + PREÇOS POR OFICINA
+// ════════════════════════════════════════
 function renderProdutos() {
+  const [tab, setTab] = [window._prodTab||'cadastro', v=>window._prodTab=v];
+  return `
+  <div class="tab-pills">
+    <button class="tab-pill ${tab==='cadastro'?'active':''}" onclick="window._prodTab='cadastro';renderScreen('produtos')">Produtos</button>
+    <button class="tab-pill ${tab==='precos'?'active':''}" onclick="window._prodTab='precos';renderScreen('produtos')">Preços por oficina</button>
+  </div>
+  ${tab==='cadastro' ? renderProdutosCadastro() : renderPrecosOficina()}
+  `;
+}
+
+function renderProdutosCadastro() {
   return `
   <div class="card">
     <div class="card-title">Cadastrar produto</div>
     <div class="form-row">
-      <div class="form-group">
-        <label>Nome do produto *</label>
-        <input id="pr-nome" placeholder="Ex: Calcinha biquíni P">
-      </div>
-      <div class="form-group">
-        <label>Valor por unidade (R$) *</label>
-        <input id="pr-valor" type="number" step="0.01" min="0" placeholder="0,00">
-      </div>
+      <div class="form-group"><label>Nome / referência *</label><input id="pr-nome" placeholder="Ex: Calcinha biquíni P"></div>
+      <div class="form-group"><label>Valor padrão/un (R$) *</label><input id="pr-valor" type="number" step="0.01" min="0" placeholder="0,00"></div>
     </div>
     <div class="form-row">
       <div class="form-group">
         <label>Categoria</label>
         <select id="pr-cat">
-          <option>Calcinha</option>
-          <option>Sutiã</option>
-          <option>Body</option>
-          <option>Conjunto</option>
-          <option>Camisola</option>
-          <option>Short</option>
-          <option>Outro</option>
+          <option>Calcinha</option><option>Sutiã</option><option>Body</option>
+          <option>Conjunto</option><option>Camisola</option><option>Short</option><option>Outro</option>
         </select>
       </div>
       <div class="form-group">
         <label>Tamanho</label>
         <select id="pr-tam">
           <option value="">Universal</option>
-          <option>PP</option><option>P</option><option>M</option>
-          <option>G</option><option>GG</option><option>XG</option>
+          <option>PP</option><option>P</option><option>M</option><option>G</option><option>GG</option><option>XG</option>
         </select>
       </div>
     </div>
-    <div class="form-group">
-      <label>Código / referência</label>
-      <input id="pr-ref" placeholder="Ex: CAL-001-P">
-    </div>
+    <div class="form-group"><label>Código / referência</label><input id="pr-ref" placeholder="Ex: CAL-001-P"></div>
     <button class="btn btn-primary btn-full" onclick="salvarProduto()">Cadastrar produto</button>
   </div>
 
-  ${state.produtos.length > 0 ? `
+  ${state.produtos.length>0?`
   <div class="card">
     <div class="card-title">Produtos cadastrados</div>
-    <div class="table-wrap">
-    <table>
-      <thead><tr><th>Produto</th><th>Categoria</th><th>Tam.</th><th>Valor/un</th><th></th></tr></thead>
-      <tbody>${state.produtos.map(p=>`
-        <tr>
-          <td><strong>${p.nome}</strong>${p.ref?`<br><span style="font-size:11px;color:var(--text-muted)">${p.ref}</span>`:''}</td>
-          <td><span class="badge badge-purple">${p.categoria||'—'}</span></td>
-          <td>${p.tamanho||'—'}</td>
-          <td style="font-weight:500;color:var(--purple)">${fmt(p.valor)}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="excluirProduto('${p.id}')">✕</button></td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
-    </div>
-  </div>` : ''}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Produto</th><th>Cat.</th><th>Tam.</th><th>Valor padrão</th><th></th></tr></thead>
+      <tbody>${state.produtos.map(p=>`<tr>
+        <td><strong>${p.nome}</strong>${p.ref?`<br><span style="font-size:11px;color:var(--text-muted)">${p.ref}</span>`:''}</td>
+        <td><span class="badge badge-brand">${p.categoria||'—'}</span></td>
+        <td>${p.tamanho||'—'}</td>
+        <td style="font-weight:500;color:var(--brand)">${fmt(p.valor)}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="excluirProduto('${p.id}')">✕</button></td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+  </div>`:''}
   `;
 }
 
+function renderPrecosOficina() {
+  if (state.oficinas.length===0||state.produtos.length===0) {
+    return '<div class="alert alert-warn">⚠️ Cadastre oficinas e produtos primeiro.</div>';
+  }
+  const oficinas = state.oficinas.filter(o=>o.tipo!=='corte');
+  return `
+  <div class="alert alert-info">💡 Defina o valor pago por cada produto em cada oficina. Deixe em branco para usar o valor padrão do produto.</div>
+  <div class="card">
+    <div class="card-title">Tabela de preços (oficina × produto)</div>
+    <div class="preco-grid">
+    <table>
+      <thead><tr><th>Produto</th>${oficinas.map(o=>`<th>${o.nome}</th>`).join('')}</tr></thead>
+      <tbody>${state.produtos.map(p=>`<tr>
+        <td><strong>${p.nome}</strong><br><span style="font-size:11px;color:var(--text-muted)">padrão: ${fmt(p.valor)}</span></td>
+        ${oficinas.map(o=>{
+          const key=o.id+'_'+p.id;
+          const val=state.precos[key]!==undefined?state.precos[key]:'';
+          return `<td><input type="number" step="0.01" min="0" placeholder="${p.valor}" value="${val}" onchange="salvarPreco('${o.id}','${p.id}',this.value)" style="width:80px"></td>`;
+        }).join('')}
+      </tr>`).join('')}
+      </tbody>
+    </table>
+    </div>
+  </div>
+  `;
+}
+
+function salvarPreco(oficina_id, produto_id, valor) {
+  const key = oficina_id+'_'+produto_id;
+  if (valor===''||valor===null) { delete state.precos[key]; }
+  else { state.precos[key] = Number(valor); }
+  saveLocal();
+}
+
 async function salvarProduto() {
-  const nome = document.getElementById('pr-nome').value.trim();
-  const valor = document.getElementById('pr-valor').value;
-  if (!nome || !valor) { toast('Nome e valor são obrigatórios', 'warn'); return; }
-
-  const pr = {
-    id: uuid(),
-    nome,
-    valor: Number(valor),
-    categoria: document.getElementById('pr-cat').value,
-    tamanho: document.getElementById('pr-tam').value,
-    ref: document.getElementById('pr-ref').value.trim(),
-  };
-
+  const nome=document.getElementById('pr-nome').value.trim();
+  const valor=document.getElementById('pr-valor').value;
+  if (!nome||!valor) { toast('Nome e valor são obrigatórios','warn'); return; }
+  const pr={id:uuid(),nome,valor:Number(valor),categoria:document.getElementById('pr-cat').value,tamanho:document.getElementById('pr-tam').value,ref:document.getElementById('pr-ref').value.trim()};
   state.produtos.push(pr);
   saveLocal();
-
-  if (GAS_URL) {
-    await api('addProduto', { row: pr });
-    toast('Produto salvo no Google Sheets ✓');
-  } else {
-    toast('Produto salvo localmente ✓');
-  }
+  if (GAS_URL) await api('addProduto',{row:pr});
+  toast('Produto salvo ✓');
   renderScreen('produtos');
 }
 
 async function excluirProduto(id) {
   if (!confirm('Excluir este produto?')) return;
-  state.produtos = state.produtos.filter(p=>p.id!==id);
+  state.produtos=state.produtos.filter(p=>p.id!==id);
   saveLocal();
-  if (GAS_URL) await api('deleteRow', {sheet:'Produtos', id});
-  toast('Produto removido');
+  if (GAS_URL) await api('deleteRow',{sheet:'Produtos',id});
+  toast('Removido');
   renderScreen('produtos');
 }
 
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
 // HISTÓRICO
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
 function renderHistorico() {
-  const oficinas = state.oficinas;
-
   return `
   <div class="card">
     <div class="card-title">Filtros</div>
     <div class="form-row">
-      <div class="form-group">
-        <label>Oficina</label>
+      <div class="form-group"><label>Oficina</label>
         <select id="h-oficina" onchange="filtrarHistorico()">
           <option value="">Todas</option>
-          ${oficinas.map(o=>`<option value="${o.id}">${o.nome}</option>`).join('')}
+          ${state.oficinas.map(o=>`<option value="${o.id}">${o.nome}</option>`).join('')}
         </select>
       </div>
-      <div class="form-group">
-        <label>Período</label>
+      <div class="form-group"><label>Período</label>
         <select id="h-periodo" onchange="filtrarHistorico()">
-          <option value="todos">Todos</option>
+          <option value="">Todos</option>
           <option value="mes">Este mês</option>
           <option value="90">Últimos 90 dias</option>
         </select>
       </div>
     </div>
   </div>
-
   <div id="historico-resultado"></div>
   <script>filtrarHistorico()<\/script>
   `;
 }
 
 function filtrarHistorico() {
-  const ofId = document.getElementById('h-oficina')?.value;
-  const periodo = document.getElementById('h-periodo')?.value;
-  const el = document.getElementById('historico-resultado');
-  if (!el) return;
+  const ofId=document.getElementById('h-oficina')?.value;
+  const periodo=document.getElementById('h-periodo')?.value;
+  const el=document.getElementById('historico-resultado');
+  if(!el) return;
 
-  let prod = [...state.producao];
-  let pag = [...state.pagamentos];
+  let rec=[...state.recebimentos,...state.producao];
+  let pag=[...state.pagamentos];
+  let cort=[...state.cortes];
 
-  if (ofId) { prod = prod.filter(p=>p.oficina_id===ofId); pag = pag.filter(p=>p.oficina_id===ofId); }
+  if(ofId){rec=rec.filter(r=>r.oficina_id===ofId);pag=pag.filter(p=>p.oficina_id===ofId);cort=cort.filter(c=>c.cortador_id===ofId);}
 
-  const agora = new Date();
-  if (periodo === 'mes') {
-    const ini = new Date(agora.getFullYear(), agora.getMonth(), 1).toISOString().split('T')[0];
-    prod = prod.filter(p=>p.data>=ini); pag = pag.filter(p=>p.data>=ini);
-  } else if (periodo === '90') {
-    const ini = new Date(agora - 90*864e5).toISOString().split('T')[0];
-    prod = prod.filter(p=>p.data>=ini); pag = pag.filter(p=>p.data>=ini);
+  if(periodo==='mes'){
+    const ini=new Date(); ini.setDate(1); const iniStr=ini.toISOString().split('T')[0];
+    rec=rec.filter(r=>r.data>=iniStr);pag=pag.filter(p=>p.data>=iniStr);cort=cort.filter(c=>c.data>=iniStr);
+  } else if(periodo==='90'){
+    const ini=new Date(Date.now()-90*864e5).toISOString().split('T')[0];
+    rec=rec.filter(r=>r.data>=ini);pag=pag.filter(p=>p.data>=ini);cort=cort.filter(c=>c.data>=ini);
   }
 
-  const totalProd = prod.reduce((s,p)=>{
-    const pr = getProduto(p.produto_id);
-    return s + (Number(p.quantidade)||0)*(Number(pr.valor)||0);
-  }, 0);
-  const totalPag = pag.reduce((s,p)=>s+(Number(p.valor)||0), 0);
+  const totalRec=rec.reduce((s,r)=>{
+    const qtd=Number(r.quantidade_ok||r.quantidade||0);
+    return s+qtd*getPreco(r.oficina_id,r.produto_id);
+  },0);
+  const totalPag=pag.reduce((s,p)=>s+Number(p.valor||0),0);
+  const totalCort=cort.reduce((s,c)=>s+Number(c.valor_total||0),0);
 
-  const rows = [
-    ...prod.map(p=>{ const pr=getProduto(p.produto_id); return {data:p.data,tipo:'Produção',desc:`${getOficina(p.oficina_id).nome} — ${pr.nome} x${fmtN(p.quantidade)}`,valor:(Number(p.quantidade)||0)*(Number(pr.valor)||0),badge:'badge-purple',label:'Produção'}; }),
-    ...pag.map(p=>({data:p.data,tipo:'Pagamento',desc:`${getOficina(p.oficina_id).nome} (${p.forma||''})`,valor:p.valor,badge:'badge-teal',label:'Pagamento'})),
+  const rows=[
+    ...cort.map(c=>{const g=c.grade||{};const t=Object.values(g).reduce((s,r)=>s+Object.values(r).reduce((a,b)=>a+Number(b||0),0),0);return{data:c.data,tipo:'Corte',desc:`${getOficina(c.cortador_id).nome} · ${getProduto(c.produto_id).nome} (${t} peças)`,valor:Number(c.valor_total||0),badge:'badge-coral'};}),
+    ...rec.map(r=>{const qtd=Number(r.quantidade_ok||r.quantidade||0);return{data:r.data,tipo:'Recebimento',desc:`${getOficina(r.oficina_id).nome} · ${getProduto(r.produto_id).nome} · OK:${qtd}${r.quantidade_defeito?` Def:${r.quantidade_defeito}`:''}`,valor:qtd*getPreco(r.oficina_id,r.produto_id),badge:'badge-brand'};}),
+    ...pag.map(p=>({data:p.data,tipo:'Pagamento',desc:`${getOficina(p.oficina_id).nome} (${p.tipo||'costura'} · ${p.forma||''})`,valor:Number(p.valor||0),badge:'badge-teal'})),
   ].sort((a,b)=>(b.data||'').localeCompare(a.data||''));
 
-  el.innerHTML = `
+  el.innerHTML=`
   <div class="stats">
-    <div class="stat"><div class="stat-label">Produção no período</div><div class="stat-value purple">${fmt(totalProd)}</div></div>
-    <div class="stat"><div class="stat-label">Pagamentos no período</div><div class="stat-value teal">${fmt(totalPag)}</div></div>
-    <div class="stat"><div class="stat-label">Saldo período</div><div class="stat-value ${totalProd-totalPag>0?'red':'teal'}">${fmt(totalProd-totalPag)}</div></div>
+    <div class="stat"><div class="stat-label">Recebimentos</div><div class="stat-value brand">${fmt(totalRec)}</div></div>
+    <div class="stat"><div class="stat-label">Cortes</div><div class="stat-value coral">${fmt(totalCort)}</div></div>
+    <div class="stat"><div class="stat-label">Pagamentos</div><div class="stat-value teal">${fmt(totalPag)}</div></div>
+    <div class="stat"><div class="stat-label">Saldo período</div><div class="stat-value ${(totalRec+totalCort-totalPag)>0?'red':'teal'}">${fmt(totalRec+totalCort-totalPag)}</div></div>
   </div>
-  ${rows.length === 0 ? '<div class="empty"><div class="empty-icon">📋</div><p>Nenhum registro encontrado</p></div>' : `
-  <div class="card">
-    <div class="table-wrap">
-    <table>
-      <thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Valor</th></tr></thead>
-      <tbody>${rows.slice(0,100).map(r=>`<tr>
-        <td>${r.data||'—'}</td>
-        <td><span class="badge ${r.badge}">${r.label}</span></td>
-        <td>${r.desc}</td>
-        <td style="font-weight:500">${fmt(r.valor)}</td>
-      </tr>`).join('')}</tbody>
-    </table>
-    </div>
-  </div>`}
+  ${rows.length===0?'<div class="empty"><div class="empty-icon">📋</div><p>Nenhum registro no período</p></div>':`
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Valor</th></tr></thead>
+    <tbody>${rows.slice(0,100).map(r=>`<tr>
+      <td>${r.data||'—'}</td>
+      <td><span class="badge ${r.badge}">${r.tipo}</span></td>
+      <td style="font-size:12px">${r.desc}</td>
+      <td style="font-weight:500">${fmt(r.valor)}</td>
+    </tr>`).join('')}</tbody>
+  </table></div></div>`}
   `;
 }
 
-// ═══════════════════════════════════════
-// IMPORTAR EXCEL
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
+// IMPORTAR / EXPORTAR
+// ════════════════════════════════════════
 function renderImportar() {
   return `
-  <div class="alert alert-info">
-    💡 Importe seu histórico de uma planilha Excel. Veja os modelos de colunas esperadas abaixo antes de importar.
+  <div class="alert alert-info">💡 Importe seu histórico de planilhas Excel. Os dados existentes são preservados (sem duplicatas por ID).</div>
+
+  <div class="card">
+    <div class="card-title">Importar produtos (com preços por oficina)</div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px">
+      Colunas esperadas: <code>nome</code>, <code>valor</code>, <code>categoria</code>, <code>tamanho</code>, <code>ref</code><br>
+      Para preços por oficina, adicione colunas extras com o <strong>nome exato da oficina</strong> como cabeçalho.
+    </p>
+    <label class="upload-area" for="xlsx-pr"><input type="file" id="xlsx-pr" accept=".xlsx,.xls,.csv" onchange="importarProdutos(this)">
+      <div style="font-size:22px;margin-bottom:6px">📦</div><div style="font-weight:500">Produtos + preços por oficina</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:3px">.xlsx / .xls / .csv</div>
+    </label>
+    <div id="import-pr-result" style="margin-top:8px"></div>
   </div>
 
   <div class="card">
-    <div class="card-title">Importar produção</div>
-    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">
-      Colunas esperadas: <code>oficina_nome</code>, <code>produto_nome</code>, <code>quantidade</code>, <code>data</code>
+    <div class="card-title">Importar recebimentos (produção)</div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px">
+      Colunas: <code>oficina_nome</code>, <code>produto_nome</code>, <code>quantidade</code>, <code>data</code>
     </p>
-    <label class="upload-area" for="xlsx-prod">
-      <input type="file" id="xlsx-prod" accept=".xlsx,.xls,.csv" onchange="importarProducao(this)">
-      <div style="font-size:24px;margin-bottom:8px">📂</div>
-      <div style="font-weight:500">Clique para escolher o arquivo</div>
-      <div style="font-size:13px;color:var(--text-muted);margin-top:4px">.xlsx, .xls ou .csv</div>
+    <label class="upload-area" for="xlsx-prod"><input type="file" id="xlsx-prod" accept=".xlsx,.xls,.csv" onchange="importarProducao(this)">
+      <div style="font-size:22px;margin-bottom:6px">🧵</div><div style="font-weight:500">Recebimentos / produção</div>
     </label>
-    <div id="import-prod-result" style="margin-top:10px"></div>
+    <div id="import-prod-result" style="margin-top:8px"></div>
   </div>
 
   <div class="card">
     <div class="card-title">Importar pagamentos</div>
-    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">
-      Colunas esperadas: <code>oficina_nome</code>, <code>valor</code>, <code>data</code>, <code>forma</code>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px">
+      Colunas: <code>oficina_nome</code>, <code>valor</code>, <code>data</code>, <code>forma</code>, <code>tipo</code> (costura ou corte)
     </p>
-    <label class="upload-area" for="xlsx-pag">
-      <input type="file" id="xlsx-pag" accept=".xlsx,.xls,.csv" onchange="importarPagamentos(this)">
-      <div style="font-size:24px;margin-bottom:8px">📂</div>
-      <div style="font-weight:500">Clique para escolher o arquivo</div>
-      <div style="font-size:13px;color:var(--text-muted);margin-top:4px">.xlsx, .xls ou .csv</div>
+    <label class="upload-area" for="xlsx-pag"><input type="file" id="xlsx-pag" accept=".xlsx,.xls,.csv" onchange="importarPagamentos(this)">
+      <div style="font-size:22px;margin-bottom:6px">💰</div><div style="font-weight:500">Pagamentos</div>
     </label>
-    <div id="import-pag-result" style="margin-top:10px"></div>
+    <div id="import-pag-result" style="margin-top:8px"></div>
   </div>
 
   <div class="card">
     <div class="card-title">Importar oficinas</div>
-    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">
-      Colunas esperadas: <code>nome</code>, <code>responsavel</code>, <code>telefone</code>, <code>cidade</code>, <code>pix</code>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px">
+      Colunas: <code>nome</code>, <code>responsavel</code>, <code>telefone</code>, <code>cidade</code>, <code>pix</code>, <code>tipo</code>
     </p>
-    <label class="upload-area" for="xlsx-of">
-      <input type="file" id="xlsx-of" accept=".xlsx,.xls,.csv" onchange="importarOficinas(this)">
-      <div style="font-size:24px;margin-bottom:8px">📂</div>
-      <div style="font-weight:500">Clique para escolher o arquivo</div>
-      <div style="font-size:13px;color:var(--text-muted);margin-top:4px">.xlsx, .xls ou .csv</div>
+    <label class="upload-area" for="xlsx-of"><input type="file" id="xlsx-of" accept=".xlsx,.xls,.csv" onchange="importarOficinas(this)">
+      <div style="font-size:22px;margin-bottom:6px">🏭</div><div style="font-weight:500">Oficinas</div>
     </label>
-    <div id="import-of-result" style="margin-top:10px"></div>
+    <div id="import-of-result" style="margin-top:8px"></div>
   </div>
 
   <div class="card">
-    <div class="card-title">Exportar dados</div>
-    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Baixe todos os dados em Excel para backup.</p>
+    <div class="card-title">Exportar backup completo</div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px">Exporta todos os dados em Excel para backup ou migração.</p>
     <button class="btn btn-primary" onclick="exportarTudo()">⬇ Baixar backup Excel</button>
   </div>
   `;
 }
 
 function lerXLSX(file) {
-  return new Promise((res, rej) => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const wb = XLSX.read(e.target.result, {type:'binary'});
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const data = XLSX.utils.sheet_to_json(ws, {defval:''});
-      res(data);
-    };
-    reader.onerror = rej;
+  return new Promise((res,rej)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{const wb=XLSX.read(e.target.result,{type:'binary'});const ws=wb.Sheets[wb.SheetNames[0]];res(XLSX.utils.sheet_to_json(ws,{defval:''}));};
+    reader.onerror=rej;
     reader.readAsBinaryString(file);
   });
 }
 
-async function importarProducao(input) {
-  const file = input.files[0]; if (!file) return;
-  const el = document.getElementById('import-prod-result');
-  el.innerHTML = '<div class="alert alert-info">Processando...</div>';
+function col(row, ...keys) { for(const k of keys){const v=row[k]||row[k.toLowerCase()]||row[k[0].toUpperCase()+k.slice(1)];if(v!==undefined&&v!=='')return v;} return ''; }
+
+async function importarProdutos(input) {
+  const file=input.files[0]; if(!file) return;
+  const el=document.getElementById('import-pr-result');
+  el.innerHTML='<div class="alert alert-info">Processando...</div>';
   try {
-    const rows = await lerXLSX(file);
-    let ok=0, erros=[];
-    for (const row of rows) {
-      const ofNome = row['oficina_nome'] || row['oficina'] || row['Oficina'];
-      const prNome = row['produto_nome'] || row['produto'] || row['Produto'];
-      const qtd = Number(row['quantidade'] || row['Quantidade'] || 0);
-      const data = String(row['data'] || row['Data'] || '');
-
-      const of = state.oficinas.find(o=>o.nome.toLowerCase()===String(ofNome).toLowerCase());
-      let pr = state.produtos.find(p=>p.nome.toLowerCase()===String(prNome).toLowerCase());
-
-      if (!of) { erros.push(`Oficina não encontrada: "${ofNome}"`); continue; }
-      if (!pr) {
-        // Cria produto automaticamente sem valor
-        pr = { id: uuid(), nome: String(prNome), valor: 0, categoria:'Outro', tamanho:'', ref:'' };
-        state.produtos.push(pr);
+    const rows=await lerXLSX(file);
+    let ok=0, prec=0;
+    for(const row of rows) {
+      const nome=String(col(row,'nome','Nome','produto','Produto')||'').trim();
+      if(!nome) continue;
+      let pr=state.produtos.find(p=>p.nome.toLowerCase()===nome.toLowerCase());
+      if(!pr){
+        pr={id:uuid(),nome,valor:Number(col(row,'valor','Valor')||0),categoria:col(row,'categoria','Categoria')||'Outro',tamanho:col(row,'tamanho','Tamanho')||'',ref:col(row,'ref','Ref','referencia','Referência')||''};
+        state.produtos.push(pr); ok++;
       }
-      state.producao.push({ id: uuid(), oficina_id: of.id, produto_id: pr.id, quantidade: qtd, data, obs:'Importado' });
+      // Preços por oficina: colunas com nome de oficina
+      state.oficinas.forEach(of=>{
+        const v=row[of.nome];
+        if(v!==undefined&&v!==''){state.precos[of.id+'_'+pr.id]=Number(v);prec++;}
+      });
+    }
+    saveLocal();
+    el.innerHTML=`<div class="alert alert-success">✓ ${ok} produtos importados · ${prec} preços por oficina definidos</div>`;
+    if(ok>0) toast(`${ok} produtos importados ✓`);
+  } catch(e){el.innerHTML=`<div class="alert alert-danger">Erro: ${e.message}</div>`;}
+}
+
+async function importarProducao(input) {
+  const file=input.files[0]; if(!file) return;
+  const el=document.getElementById('import-prod-result');
+  el.innerHTML='<div class="alert alert-info">Processando...</div>';
+  try {
+    const rows=await lerXLSX(file);
+    let ok=0, erros=[];
+    for(const row of rows){
+      const ofNome=col(row,'oficina_nome','oficina','Oficina');
+      const prNome=col(row,'produto_nome','produto','Produto');
+      const qtd=Number(col(row,'quantidade','Quantidade')||0);
+      const data=String(col(row,'data','Data')||'');
+      const of=state.oficinas.find(o=>o.nome.toLowerCase()===String(ofNome).toLowerCase());
+      if(!of){erros.push(`Oficina não encontrada: "${ofNome}"`);continue;}
+      let pr=state.produtos.find(p=>p.nome.toLowerCase()===String(prNome).toLowerCase());
+      if(!pr){pr={id:uuid(),nome:String(prNome),valor:0,categoria:'Outro',tamanho:'',ref:''};state.produtos.push(pr);}
+      state.producao.push({id:uuid(),oficina_id:of.id,produto_id:pr.id,quantidade:qtd,data,obs:'Importado'});
       ok++;
     }
     saveLocal();
-    const erroHtml = erros.length ? `<div class="alert alert-warn" style="margin-top:8px">⚠️ ${erros.slice(0,5).join('<br>')}</div>` : '';
-    el.innerHTML = `<div class="alert alert-success">✓ ${ok} entradas importadas</div>${erroHtml}`;
-    if (ok > 0) toast(`${ok} entradas importadas ✓`);
-  } catch(e) {
-    el.innerHTML = `<div class="alert alert-danger">Erro ao ler arquivo: ${e.message}</div>`;
-  }
+    el.innerHTML=`<div class="alert alert-success">✓ ${ok} registros importados</div>${erros.length?`<div class="alert alert-warn">${erros.slice(0,5).join('<br>')}</div>`:''}`;
+    if(ok>0) toast(`${ok} registros importados ✓`);
+  } catch(e){el.innerHTML=`<div class="alert alert-danger">Erro: ${e.message}</div>`;}
 }
 
 async function importarPagamentos(input) {
-  const file = input.files[0]; if (!file) return;
-  const el = document.getElementById('import-pag-result');
-  el.innerHTML = '<div class="alert alert-info">Processando...</div>';
+  const file=input.files[0]; if(!file) return;
+  const el=document.getElementById('import-pag-result');
+  el.innerHTML='<div class="alert alert-info">Processando...</div>';
   try {
-    const rows = await lerXLSX(file);
+    const rows=await lerXLSX(file);
     let ok=0, erros=[];
-    for (const row of rows) {
-      const ofNome = row['oficina_nome'] || row['oficina'] || row['Oficina'];
-      const valor = Number(row['valor'] || row['Valor'] || 0);
-      const data = String(row['data'] || row['Data'] || '');
-      const forma = String(row['forma'] || row['Forma'] || 'Pix');
-
-      const of = state.oficinas.find(o=>o.nome.toLowerCase()===String(ofNome).toLowerCase());
-      if (!of) { erros.push(`Oficina não encontrada: "${ofNome}"`); continue; }
-      state.pagamentos.push({ id: uuid(), oficina_id: of.id, valor, data, forma, obs:'Importado' });
+    for(const row of rows){
+      const ofNome=col(row,'oficina_nome','oficina','Oficina');
+      const valor=Number(col(row,'valor','Valor')||0);
+      const data=String(col(row,'data','Data')||'');
+      const forma=String(col(row,'forma','Forma')||'Pix');
+      const tipo=String(col(row,'tipo','Tipo')||'costura');
+      const of=state.oficinas.find(o=>o.nome.toLowerCase()===String(ofNome).toLowerCase());
+      if(!of){erros.push(`Oficina não encontrada: "${ofNome}"`);continue;}
+      state.pagamentos.push({id:uuid(),oficina_id:of.id,valor,data,forma,tipo,obs:'Importado'});
       ok++;
     }
     saveLocal();
-    el.innerHTML = `<div class="alert alert-success">✓ ${ok} pagamentos importados</div>`;
-    if (ok > 0) toast(`${ok} pagamentos importados ✓`);
-  } catch(e) {
-    el.innerHTML = `<div class="alert alert-danger">Erro: ${e.message}</div>`;
-  }
+    el.innerHTML=`<div class="alert alert-success">✓ ${ok} pagamentos importados</div>${erros.length?`<div class="alert alert-warn">${erros.slice(0,3).join('<br>')}</div>`:''}`;
+    if(ok>0) toast(`${ok} pagamentos importados ✓`);
+  } catch(e){el.innerHTML=`<div class="alert alert-danger">Erro: ${e.message}</div>`;}
 }
 
 async function importarOficinas(input) {
-  const file = input.files[0]; if (!file) return;
-  const el = document.getElementById('import-of-result');
-  el.innerHTML = '<div class="alert alert-info">Processando...</div>';
+  const file=input.files[0]; if(!file) return;
+  const el=document.getElementById('import-of-result');
+  el.innerHTML='<div class="alert alert-info">Processando...</div>';
   try {
-    const rows = await lerXLSX(file);
+    const rows=await lerXLSX(file);
     let ok=0;
-    for (const row of rows) {
-      const nome = String(row['nome'] || row['Nome'] || '').trim();
-      if (!nome) continue;
-      if (state.oficinas.find(o=>o.nome.toLowerCase()===nome.toLowerCase())) continue;
-      state.oficinas.push({
-        id: uuid(),
-        nome,
-        responsavel: row['responsavel'] || row['Responsável'] || '',
-        telefone: row['telefone'] || row['Telefone'] || '',
-        cidade: row['cidade'] || row['Cidade'] || '',
-        pix: row['pix'] || row['Pix'] || '',
-      });
+    for(const row of rows){
+      const nome=String(col(row,'nome','Nome')||'').trim();
+      if(!nome) continue;
+      if(state.oficinas.find(o=>o.nome.toLowerCase()===nome.toLowerCase())) continue;
+      state.oficinas.push({id:uuid(),nome,responsavel:col(row,'responsavel','Responsável')||'',telefone:col(row,'telefone','Telefone')||'',cidade:col(row,'cidade','Cidade')||'',pix:col(row,'pix','Pix')||'',tipo:col(row,'tipo','Tipo')||'costura'});
       ok++;
     }
     saveLocal();
-    el.innerHTML = `<div class="alert alert-success">✓ ${ok} oficinas importadas</div>`;
-    if (ok > 0) toast(`${ok} oficinas importadas ✓`);
-  } catch(e) {
-    el.innerHTML = `<div class="alert alert-danger">Erro: ${e.message}</div>`;
-  }
+    el.innerHTML=`<div class="alert alert-success">✓ ${ok} oficinas importadas</div>`;
+    if(ok>0) toast(`${ok} oficinas importadas ✓`);
+  } catch(e){el.innerHTML=`<div class="alert alert-danger">Erro: ${e.message}</div>`;}
 }
 
 function exportarTudo() {
-  const wb = XLSX.utils.book_new();
-
-  const ofData = state.oficinas.map(o=>({Nome:o.nome,Responsável:o.responsavel,Telefone:o.telefone,Cidade:o.cidade,Pix:o.pix,Saldo:saldoOficina(o.id)}));
-  const prData = state.produtos.map(p=>({Nome:p.nome,Categoria:p.categoria,Tamanho:p.tamanho,Referência:p.ref,'Valor/un':p.valor}));
-  const prodData = state.producao.map(p=>{ const pr=getProduto(p.produto_id); return {Data:p.data,Oficina:getOficina(p.oficina_id).nome,Produto:pr.nome,Quantidade:p.quantidade,ValorUnit:pr.valor,ValorTotal:(Number(p.quantidade)||0)*(Number(pr.valor)||0),Obs:p.obs}; });
-  const pagData = state.pagamentos.map(p=>({Data:p.data,Oficina:getOficina(p.oficina_id).nome,Valor:p.valor,Forma:p.forma,Obs:p.obs}));
-
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(ofData), 'Oficinas');
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(prData), 'Produtos');
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(prodData), 'Producao');
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(pagData), 'Pagamentos');
-  XLSX.writeFile(wb, `backup-producao-${new Date().toISOString().split('T')[0]}.xlsx`);
+  const wb=XLSX.utils.book_new();
+  const ofData=state.oficinas.map(o=>({Nome:o.nome,Responsável:o.responsavel,Telefone:o.telefone,Cidade:o.cidade,Pix:o.pix,Tipo:o.tipo,'Saldo Costura':saldoCostura(o.id),'Saldo Corte':saldoCorte(o.id)}));
+  const prData=state.produtos.map(p=>({Nome:p.nome,Categoria:p.categoria,Tamanho:p.tamanho,Referência:p.ref,'Valor padrão':p.valor}));
+  const prodData=state.producao.map(p=>{const pr=getProduto(p.produto_id);return{Data:p.data,Oficina:getOficina(p.oficina_id).nome,Produto:pr.nome,Quantidade:p.quantidade,'Valor Unit':getPreco(p.oficina_id,p.produto_id),'Valor Total':(Number(p.quantidade)||0)*getPreco(p.oficina_id,p.produto_id),Obs:p.obs};});
+  const recData=state.recebimentos.map(r=>({Data:r.data,Oficina:getOficina(r.oficina_id).nome,Produto:getProduto(r.produto_id).nome,'Qtd OK':r.quantidade_ok,'Qtd Defeito':r.quantidade_defeito,'Valor':(Number(r.quantidade_ok||0))*getPreco(r.oficina_id,r.produto_id),Obs:r.obs}));
+  const pagData=state.pagamentos.map(p=>({Data:p.data,Oficina:getOficina(p.oficina_id).nome,Tipo:p.tipo,Valor:p.valor,Forma:p.forma,Obs:p.obs}));
+  const cortData=state.cortes.map(c=>{const g=c.grade||{};const t=Object.values(g).reduce((s,r)=>s+Object.values(r).reduce((a,b)=>a+Number(b||0),0),0);return{Data:c.data,Cortador:getOficina(c.cortador_id).nome,Produto:getProduto(c.produto_id).nome,'Total Peças':t,'Valor/Peça':c.valor_peca,'Valor Total':c.valor_total};});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(ofData),'Oficinas');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(prData),'Produtos');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(prodData),'Producao_legado');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(recData),'Recebimentos');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(pagData),'Pagamentos');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(cortData),'Cortes');
+  XLSX.writeFile(wb,`backup-${new Date().toISOString().split('T')[0]}.xlsx`);
   toast('Backup exportado ✓');
 }
 
-// ═══════════════════════════════════════
-// CONFIGURAÇÕES
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
+// CONFIGURAÇÕES (Visual + Sheets)
+// ════════════════════════════════════════
 function openConfig() {
   openModal(`
-  <div class="modal-header">
-    <span class="modal-title">Configurações</span>
-    <button class="btn-close" onclick="closeModal()">✕</button>
+  <div class="modal-header"><span class="modal-title">Configurações</span><button class="btn-close" onclick="closeModal()">✕</button></div>
+
+  <div style="margin-bottom:20px">
+    <div class="card-title" style="margin-bottom:10px">Identidade visual</div>
+    <div class="form-group">
+      <label>Nome do sistema</label>
+      <input id="cfg-nome" value="${tema.nome||''}" placeholder="Ex: Produção Minha Marca">
+    </div>
+    <div class="form-group">
+      <label>Cor principal</label>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <input type="color" id="cfg-cor" value="${tema.cor||'#3C3489'}" style="width:44px;height:36px;border-radius:8px;cursor:pointer;border:1px solid var(--gray-border)">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${['#3C3489','#0F6E56','#993C1D','#185FA5','#993556','#3B6D11','#1a1a18','#854F0B'].map(c=>`
+            <button onclick="document.getElementById('cfg-cor').value='${c}'" style="width:26px;height:26px;background:${c};border-radius:50%;border:2px solid ${c===tema.cor?'#fff':'transparent'};cursor:pointer;outline:2px solid ${c===tema.cor?c:'transparent'}"></button>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Logo da marca (imagem)</label>
+      <input type="file" id="cfg-logo" accept="image/*" onchange="previewLogo(this)">
+      ${tema.logo?`<div style="margin-top:6px"><img src="${tema.logo}" style="height:40px;border-radius:6px"> <button onclick="tema.logo='';document.getElementById('cfg-logo').value='';document.getElementById('logo-preview').innerHTML=''" class="btn btn-danger btn-sm" style="vertical-align:middle">Remover</button></div>`:''}
+      <div id="logo-preview"></div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="salvarTema()">Aplicar tema</button>
   </div>
 
-  <div class="config-section">
-    <h3>Google Apps Script</h3>
-    <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px">
-      Cole aqui a URL do seu Google Apps Script para sincronizar os dados com o Google Sheets.
-    </p>
+  <div style="border-top:0.5px solid var(--gray-border);padding-top:16px;margin-bottom:16px">
+    <div class="card-title" style="margin-bottom:10px">Google Sheets</div>
     <div class="form-group">
-      <label>URL do Web App</label>
+      <label>URL do Apps Script</label>
       <input id="cfg-url" value="${GAS_URL}" placeholder="https://script.google.com/macros/s/.../exec">
     </div>
-    <button class="btn btn-primary btn-full" onclick="salvarConfig()">Salvar e testar conexão</button>
+    <button class="btn btn-secondary btn-full" onclick="salvarGAS()">Salvar e testar conexão</button>
   </div>
 
-  <div class="config-section" style="margin-top:20px">
-    <h3>Como configurar</h3>
-    <ol style="font-size:13px;color:var(--text-muted);padding-left:18px;line-height:1.9">
-      <li>Abra <a href="https://script.google.com" target="_blank" style="color:var(--purple)">script.google.com</a></li>
-      <li>Crie um novo projeto</li>
-      <li>Cole o código do Apps Script (disponível no arquivo <code>apps-script.gs</code> que você recebeu)</li>
-      <li>Clique em <strong>Implantar → Nova implantação</strong></li>
-      <li>Tipo: <strong>App da Web</strong>, acesso: <strong>Qualquer pessoa</strong></li>
-      <li>Copie a URL gerada e cole aqui</li>
-    </ol>
-  </div>
-
-  <div class="config-section" style="margin-top:16px">
-    <h3>Dados locais</h3>
-    <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px">
-      ${state.oficinas.length} oficinas · ${state.produtos.length} produtos · ${state.producao.length} entradas · ${state.pagamentos.length} pagamentos
+  <div style="border-top:0.5px solid var(--gray-border);padding-top:16px">
+    <div class="card-title" style="margin-bottom:8px">Dados locais</div>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">
+      ${state.oficinas.length} oficinas · ${state.produtos.length} produtos · ${state.cortes.length} cortes · ${state.recebimentos.length+state.producao.length} recebimentos · ${state.pagamentos.length} pagamentos
     </p>
-    <button class="btn btn-danger btn-sm" onclick="limparDados()">Limpar dados locais</button>
+    <button class="btn btn-danger btn-sm" onclick="limparDados()">Limpar todos os dados locais</button>
   </div>
   `);
 }
 
-async function salvarConfig() {
-  const url = document.getElementById('cfg-url').value.trim();
-  GAS_URL = url;
-  localStorage.setItem('gas_url', url);
+function previewLogo(input) {
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    tema.logo=e.target.result;
+    document.getElementById('logo-preview').innerHTML=`<img src="${e.target.result}" style="height:40px;border-radius:6px;margin-top:6px">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function salvarTema() {
+  tema.nome = document.getElementById('cfg-nome').value.trim()||'Controle de Produção';
+  tema.cor = document.getElementById('cfg-cor').value;
+  localStorage.setItem('tema', JSON.stringify(tema));
+  aplicarTema();
   closeModal();
-  if (url) {
-    toast('Testando conexão...');
-    await syncAll();
-  } else {
-    toast('URL removida — modo offline ativo');
-  }
+  toast('Tema aplicado ✓');
+}
+
+async function salvarGAS() {
+  const url=document.getElementById('cfg-url').value.trim();
+  GAS_URL=url;
+  localStorage.setItem('gas_url',url);
+  closeModal();
+  if(url){toast('Testando conexão...');await syncAll();}
+  else toast('Modo offline ativo');
 }
 
 function limparDados() {
-  if (!confirm('Limpar TODOS os dados locais? Esta ação não pode ser desfeita.')) return;
-  state = { oficinas:[], produtos:[], producao:[], pagamentos:[] };
-  saveLocal();
-  closeModal();
-  toast('Dados locais limpos');
-  renderScreen(currentScreen);
+  if(!confirm('Limpar TODOS os dados? Não pode ser desfeito.')) return;
+  state={oficinas:[],produtos:[],producao:[],pagamentos:[],cortes:[],lotes:[],recebimentos:[],precos:{}};
+  saveLocal();closeModal();toast('Dados limpos');renderScreen(currentScreen);
 }
 
-// ═══════════════════════════════════════
+// ════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════
-document.getElementById('topbar-sub').textContent = GAS_URL ? 'Conectado ao Sheets' : 'Modo offline (configure o Sheets)';
+// ════════════════════════════════════════
+aplicarTema();
+document.getElementById('topbar-sub').textContent = GAS_URL ? 'Conectado ao Sheets' : 'Offline — configure o Sheets ⚙';
 renderScreen('dashboard');
 if (GAS_URL) syncAll();
 </script>
